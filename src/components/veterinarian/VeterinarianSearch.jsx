@@ -57,8 +57,8 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
 
     const handleClearSearch = () => {
         setSearchQuery({date: null, time: null, specialization: ""});
-        setShowDateTime(false)
-        onSearchResult([])
+        setShowDateTime(false);
+        onSearchResult(null);
     };
 
   return (

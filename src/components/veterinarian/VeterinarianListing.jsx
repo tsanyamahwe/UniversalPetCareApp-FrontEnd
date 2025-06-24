@@ -27,10 +27,12 @@ const VeterinarianListing = () => {
     const handleSearchResult = (veterinarians) => {
         if(veterinarians === null){
             setVeterinarians(allVeterinarians);
-            setShowErrorAlert(false);
-        }else{
+            //setShowErrorAlert(false);
+        }else if(Array.isArray(veterinarians) && veterinarians.length > 0){
             setVeterinarians(veterinarians);
-            setShowErrorAlert(false);
+        }else{
+        setVeterinarians([]);
+        //setShowErrorAlert(false);
         }
     };
 
