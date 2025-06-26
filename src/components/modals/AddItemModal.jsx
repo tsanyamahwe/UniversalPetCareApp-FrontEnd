@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Modal, Form} from 'react-bootstrap';
+import {Modal, Form, Button} from 'react-bootstrap';
 
 const AddItemModal = ({show, handleClose, handleSave, itemLabel}) => {
     const[itemValue, setItemValue] = useState("");
@@ -21,7 +21,7 @@ const AddItemModal = ({show, handleClose, handleSave, itemLabel}) => {
         </Modal.Header>
         <Modal.Body>
             <Form>
-                <Form.Group>
+                <Form.Group className='mb-1'>
                     <Form.Label>{itemLabel} Name </Form.Label>
                     <Form.Control type="text" placeholder={`Enter ${itemLabel.toLowerCase()} name`} value={itemValue} onChange={handleInputChange}/>
                 </Form.Group>

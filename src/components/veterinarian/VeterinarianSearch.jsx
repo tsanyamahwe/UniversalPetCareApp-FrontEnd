@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import AlertMessage from '../common/AlertMessage';
 import { findAvailableVeterinarians } from './VeterinarianService';
+import { dateTimeFormatter } from '../utils/Utilities';
 
 const VeterinarianSearch = ({onSearchResult = () => {}}) => {
     const[searchQuery, setSearchQuery] = useState({date: null, time: null, specialization: ""});
@@ -34,14 +35,16 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
     };
 
     const handleSearch = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        
+        const{date, time} = searchQuery;
+        const{formattedDate, formattedTime} = dateTimeFormatter(date, time);
+
         let searchParams = {specialization : searchQuery.specialization}
         if(searchQuery.date){
-            const formattedDate = format(searchQuery.date, "yyyy-MM-dd")
             searchParams.date = formattedDate
         }
         if(searchQuery.time){
-            const formattedTime = format(searchQuery.time, "HH:mm")
             searchParams.time = formattedTime
         }
         try {
@@ -74,7 +77,6 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
                     <option value="Other">Other</option>
                 </Form.Control>
             </Form.Group>
-
             <fieldset>
                 <Row className='mb-3'>
                     <Col>

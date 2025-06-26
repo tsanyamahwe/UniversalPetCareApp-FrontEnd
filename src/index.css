@@ -197,3 +197,28 @@
     margin-bottom: 20px;
     margin-top: 100px;
 }
+
+.justify-content-center {
+  display: flex;
+  justify-content: center;
+}
+
+.shadow {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.field-set {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #fafafa;
+}
+
+.h5 {
+    font-Size: '0.4rem'
+}

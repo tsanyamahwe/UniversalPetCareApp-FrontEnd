@@ -1,10 +1,23 @@
-import React, {useState} from 'react';
-import {Form} from 'react-bootstrap';
+import React, {useEffect, useState} from 'react';
+import {Form, Col} from 'react-bootstrap';
 import AddItemModal from '../modals/AddItemModal';
+import { getPetTypes } from './PetService';
 
 const PetTypeSelector = ({value, onChange}) => {
     const[petTypes, setPetTypes] = useState([]);
     const[showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+        const fetchPetTypes = async () => {
+            try{
+                const response = await getPetTypes();
+                setPetTypes(response.data);
+            }catch(error){
+                console.error(error.response.data.message);
+            }
+        }
+        fetchPetTypes();
+    }, [])
 
     //1. handle color change
     const handleTypeChange = (e) => {
@@ -24,17 +37,18 @@ const PetTypeSelector = ({value, onChange}) => {
 
   return (
     <React.Fragment>
-        <Form>
-            <Form.Group>
+        <div>
+            <Form.Group as={Col} controlId='petType'>
                 <Form.Control as="select" name="petType" value={value} required onChange={handleTypeChange}>
                     <option value=''>select type</option>   
                     <option value='add-new-item'>Add New Item</option>
-                    <option value='dog'>Dog</option> 
-                    <option value='cat'>Cat</option>                 
+                    {petTypes.map((type) => (
+                        <option key={type} value={type}>{type}</option>
+                    ))}              
                 </Form.Control>                
             </Form.Group>
             <AddItemModal show={showModal} handleClose={() => setShowModal(false)} handleSave={handleSaveNewItem} itemLabel={'Type'}/>
-        </Form>
+        </div>
     </React.Fragment>
   );
 };
