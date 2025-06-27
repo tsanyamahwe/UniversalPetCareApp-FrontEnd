@@ -9,3 +9,13 @@ export async function bookAppointment(senderId, recipientId, appointmentRequest)
         throw error;
     }
 }
+
+export async function savePets(pets) {
+    try{
+        const result = await api.post("/save-pets", pets);
+        return result.data;
+    }catch(error){
+         throw error;
+    }
+    
+}

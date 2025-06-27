@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { dateTimeFormatter } from '../utils/Utilities';
 import { useParams } from 'react-router-dom';
 import { Card, Col, Container, Row, Form, OverlayTrigger, Tooltip, Button} from 'react-bootstrap';
@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker';
 import PetEntry from '../pets/PetEntry';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import { FaPlus } from 'react-icons/fa';
-import { bookAppointment } from './AppointmentService';
+import { bookAppointment, savePets } from './AppointmentService';
 import AlertMessage from '../common/AlertMessage';
 
 const BookAppointment = () => {
@@ -105,8 +105,10 @@ const BookAppointment = () => {
         try {
             console.log("The appointment request :", appointmentRequest);
             const response = await bookAppointment(senderId, recipientId, appointmentRequest);
+            const response1 = await savePets(pets)
             console.log("The appointment response :", response);
             setSuccessMessage(response.message);
+            setSuccessMessage(response1.message);
             handleReset();
             setShowSuccessAlert(true);
         } catch (error) {
