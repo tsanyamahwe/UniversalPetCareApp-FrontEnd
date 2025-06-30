@@ -24,7 +24,7 @@ const VeterinarianCard = ({vet}) => {
                 </Accordion.Header>
                 <Accordion.Body>
                      <div>
-                        <Link to={""} className="link-2">See what people say about: </Link>{""}
+                        <Link to={`veterinarian/${vet.id}/veterinarian`} className="link-2">See what people say about: </Link>{""}
                         <span className='margin-left-space'>Dr. {vet.firstName}</span>
                      </div>
                 </Accordion.Body>                

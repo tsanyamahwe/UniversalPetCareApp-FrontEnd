@@ -6,10 +6,12 @@ import DatePicker from 'react-datepicker';
 import PetEntry from '../pets/PetEntry';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import { FaPlus } from 'react-icons/fa';
-import { bookAppointment, savePets } from './AppointmentService';
+import { bookAppointment } from './AppointmentService';
 import AlertMessage from '../common/AlertMessage';
+import ProcessSpinner from '../common/ProcessSpinner';
 
 const BookAppointment = () => {
+    const[isProcessing, setIsProcessing] = useState(false);
     const[formData, setFormData] = useState({
         appointmentDate: "",
         appointmentTime: "",
@@ -102,19 +104,25 @@ const BookAppointment = () => {
             pets: pets,
         };
 
+        setIsProcessing(true);
+
         try {
             console.log("The appointment request :", appointmentRequest);
             const response = await bookAppointment(senderId, recipientId, appointmentRequest);
-            const response1 = await savePets(pets)
+            //const response1 = await savePets(addPet)
             console.log("The appointment response :", response);
             setSuccessMessage(response.message);
-            setSuccessMessage(response1.message);
+           // setSuccessMessage(response1.message);
             handleReset();
             setShowSuccessAlert(true);
         } catch (error) {
             console.log("The appointment error :", error);
             setErrorMessage(error.response.data.message);
             setShowErrorAlert(true);
+        }finally{
+            setTimeout(() => {
+                setIsProcessing(false);
+            }, 3000)  
         }
     };
 
@@ -210,8 +218,12 @@ const BookAppointment = () => {
                                         <FaPlus/>
                                     </Button>
                                 </OverlayTrigger>
-                                <Button type='submit' variant='outline-primary' size='sm' className='me-2'>
-                                    Book Appointment
+                                <Button 
+                                    type='submit' 
+                                    variant='outline-primary' 
+                                    size='sm' className='me-2' 
+                                    disabled={isProcessing}>
+                                    {isProcessing? (<ProcessSpinner message="Booking appointment, please wait!"/>):("Book Appointment")}
                                 </Button>
                                 <Button variant='outline-info' size='sm' onClick={handleReset}>
                                     Reset

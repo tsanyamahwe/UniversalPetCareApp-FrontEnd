@@ -10,12 +10,12 @@ export async function bookAppointment(senderId, recipientId, appointmentRequest)
     }
 }
 
-export async function savePets(pets) {
-    try{
-        const result = await api.post("/save-pets", pets);
-        return result.data;
-    }catch(error){
-         throw error;
-    }
+// export async function savePets(addPet) {
+//     try{
+//         const result = await api.post("/save-pets", addPet);
+//         return result.data;
+//     }catch(error){
+//          throw error;
+//     }
     
-}
+// }

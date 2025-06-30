@@ -5,6 +5,7 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import RootLayout from './components/layout/RootLayout';
 import VeterinarianListing from './components/veterinarian/VeterinarianListing';
 import BookAppointment from './components/appointment/BookAppointment';
+import Veterinarian from './components/veterinarian/Veterinarian';
 
 function App() {
   const router = createBrowserRouter(createRoutesFromElements(
@@ -12,6 +13,7 @@ function App() {
         <Route index element={<Home/>}/>
         <Route path='/doctors' element={<VeterinarianListing/>}/>
         <Route path='/book-appointment/:recipientId/new-appointment' element={<BookAppointment/>}/>
+        <Route path='doctors/veterinarian/:vetId/veterinarian' element={<Veterinarian/>}/> 
      </Route>
   ))
   return (
