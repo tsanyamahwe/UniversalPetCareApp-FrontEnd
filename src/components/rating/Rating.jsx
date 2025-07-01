@@ -6,22 +6,33 @@ import AlertMessage from '../common/AlertMessage';
 
 const Rating = ({veterinarianId, onReviewSubmit}) => {
     const[hover, setHover] = useState(null);
-    const[reviewInfo, setReviewInfo] = useState({
-        rating: null,
-        feedback: null,
-    });
+    const[rating, setRating] = useState(null);
+    const[feedback, setFeedback] = useState(null);
 
     const{successMessage, errorMessage, setSuccessMessage, setErrorMessage, showSuccessAlert, showErrorAlert, setShowSuccessAlert, setShowErrorAlert} = UseMessageAlerts();
 
-    const handleInputChange = (e) => {
+    /*const handleInputChange = (e) => {
         const{name, value} = e.target;
         setReviewInfo((previousState) => ({
             ...previousState, [name]: value,
         }));
+    };*/
+
+    const handleRatingChange = (value) => {
+        setRating(value);
+    };
+
+    const handleFeedbackChange = (e) => {
+        setFeedback(e.target.value);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const reviewInfo = {
+            rating: rating,
+            feedback: feedback,
+        };
 
         try {
             const response = await addReview(veterinarianId, reviewerId, reviewInfo)
@@ -46,24 +57,24 @@ const Rating = ({veterinarianId, onReviewSubmit}) => {
         )}
         <Form>
             <h5>Rate this doctor:</h5>
-            <div>
+            <div className='mb-2'>
                 {[...Array(5)].map((_, index) => {
                     const ratingValue = index + 1;
                     return(
-                        <Form.Label key={index}>
+                        <Form.Label key={index} className='me-1'>
                             <Form.Check
                                 type='radio'
                                 name='rating'
                                 value={ratingValue}
-                                onChange={handleInputChange}
-                                checked={reviewInfo.rating === ratingValue}
+                                onChange={() => handleRatingChange(ratingValue)}
+                                checked={rating === ratingValue}
                                 inline
                             />
                             <FaStar
-                                size={20}
+                                size={18}
                                 className='star'
                                 color={
-                                    ratingValue <= (hover || reviewInfo.rating) ? "#ff01c7" : "#e4e5e7"
+                                    ratingValue <= (hover || rating) ? "#ff01c7" : "#e4e5e7"
                                 }
                                 onMouseEnter={() => setHover(ratingValue)}
                                 onMouseLeave={() => setHover(null)}
@@ -76,16 +87,16 @@ const Rating = ({veterinarianId, onReviewSubmit}) => {
                 <Form.Control 
                     as="textarea"
                     rows={4}
-                    value={reviewInfo.feedback || ''}
+                    value={feedback || ''}
                     required
-                    onChange={handleInputChange}
+                    onChange={handleFeedbackChange}
                     placeholder='Leave a feedback messsage'
                 />
             </div>
-            <div>
-                <Button variant='secondary'>Submit Review</Button>
+            <div className='mt-2'>
+                <Button variant='outline-primary'>Submit Review</Button>
             </div>
-            <p>You have rated this doctor with <span style={{color: "orange"}}>{reviewInfo.rating} stars</span></p>
+            <p>You have rated this doctor with <span style={{color: "orange"}}>{rating} stars</span></p>
         </Form>      
     </React.Fragment>
   )

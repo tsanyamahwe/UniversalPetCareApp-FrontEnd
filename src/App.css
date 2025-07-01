@@ -67,3 +67,28 @@ h6{
   height: 2.5rem;
   margin-top: auto;
 }
+
+.review-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h5 {
+  font-size: 1.0rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #276ee8;
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}

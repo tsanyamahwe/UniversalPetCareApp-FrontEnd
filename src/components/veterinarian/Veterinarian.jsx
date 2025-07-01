@@ -8,6 +8,7 @@ import Review from '../review/Review';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import Rating from '../rating/Rating';
 import { getUserById } from '../user/UserService';
+import AlertMessage from '../common/AlertMessage';
 
 const Veterinarian = () => {
     const[veterinarian, setVeterinarian] = useState(null);
@@ -61,9 +62,12 @@ const Veterinarian = () => {
     };
 
   return (
-    <Container>
+    <Container className='d-flex justify-content-center align-items-center mt-4'> 
+        {showErrorAlert && (
+            <AlertMessage type={"danger"} message={errorMessage}/>
+        )}
         {veterinarian && (
-            <Card>
+            <Card className='review-card mt-2'>
                 <Row>
                     <Col>
                         <UserImage
