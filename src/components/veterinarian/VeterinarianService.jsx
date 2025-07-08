@@ -10,7 +10,7 @@ export async function getVeterinarians() {
     } catch (error) {
         throw error;
     }    
-}
+};
 
 export async function findAvailableVeterinarians(searchParams) {
     try {
@@ -20,4 +20,13 @@ export async function findAvailableVeterinarians(searchParams) {
     } catch (error) {
         throw error;
     }
-} 
+}; 
+
+export async function getVetSpecializations() {
+    try {
+        const result = await api.get("/veterinarians/get-vet-specializations");
+        return result.data;
+    } catch (error) {
+        throw error;
+    }
+};

@@ -27,6 +27,7 @@ const PetColorSelector = ({ value, onChange }) => {
             onChange(e);
         }
     };
+
     //2. handle save new items
     const handleSaveNewItem = (newItem) => {
         if(newItem && !petColors.includes(newItem)){
@@ -39,7 +40,12 @@ const PetColorSelector = ({ value, onChange }) => {
     <React.Fragment>
         <div>
             <Form.Group as={Col} controlId='petColor'>
-                <Form.Control as="select" name="petColor" value={value} required onChange={handleColorChange}>
+                <Form.Control
+                    as="select" 
+                    name="petColor" 
+                    value={value} 
+                    required 
+                    onChange={handleColorChange}>
                     <option value=''>select color</option>   
                     <option value='add-new-item'>Add New Item</option>
                     {petColors.map((color) => (
@@ -47,7 +53,11 @@ const PetColorSelector = ({ value, onChange }) => {
                     ))}                 
                 </Form.Control>                
             </Form.Group>
-            <AddItemModal show={showModal} handleClose={() => setShowModal(false)} handleSave={handleSaveNewItem} itemLabel={'Color'}/>
+            <AddItemModal 
+                show={showModal} 
+                handleClose={() => setShowModal(false)} 
+                handleSave={handleSaveNewItem} 
+                itemLabel={'Color'}/>
         </div>
     </React.Fragment>
   );

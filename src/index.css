@@ -81,23 +81,23 @@
 
 .review.rating-stars {
     /* Layout and spacing */
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    margin: 0.5rem 0;
+    /*display: flex;*/
+    /*align-items: center;*/
+    gap: 0.1rem;
+    margin: 0.2rem 0;
     
     /* Typography */
-    font-size: 0.9rem;
+    font-size: 0.0rem;
     line-height: 1;
     
     /* Visual styling */
-    color: #add8e6; /* Gold color for stars */
+    color: #c1ced3; /* Gold color for stars */
     transition: all 0.3s ease;
     
     /* Optional: Add subtle background */
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    background-color: rgba(251, 191, 36, 0.1);
+    padding: 0.1rem;
+    border-radius: 0.1rem;
+    background-color: rgba(231, 168, 6, 0.1);
     
     /* Accessibility */
     cursor: default;

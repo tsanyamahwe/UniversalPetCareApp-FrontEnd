@@ -9,7 +9,11 @@ import { findAvailableVeterinarians } from './VeterinarianService';
 import { dateTimeFormatter } from '../utils/Utilities';
 
 const VeterinarianSearch = ({onSearchResult = () => {}}) => {
-    const[searchQuery, setSearchQuery] = useState({date: null, time: null, specialization: ""});
+    const[searchQuery, setSearchQuery] = useState({
+        date: null, 
+        time: null, 
+        specialization: ""
+    });
 
     const[showDateTime, setShowDateTime] = useState(false);
     const{errorMessage, setErrorMessage, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
@@ -18,12 +22,16 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
         setSearchQuery({...searchQuery, [e.target.name]: e.target.value});
     };
 
-    const handleDateChange = (date) => {
-        setSearchQuery({...searchQuery, date});
+     const handleDateChange = (date) => {
+        setSearchQuery((previousState) => ({
+            ...previousState, date: date,
+        }));
     };
 
     const handleTimeChange = (time) => {
-        setSearchQuery({...searchQuery, time});
+        setSearchQuery((previousState) => ({
+            ...previousState, time: time,
+        }));
     };
 
     const handleDateTimeToggle = (e) => {
@@ -40,7 +48,8 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
         const{date, time} = searchQuery;
         const{formattedDate, formattedTime} = dateTimeFormatter(date, time);
 
-        let searchParams = {specialization : searchQuery.specialization}
+        let searchParams = {specialization : searchQuery.specialization};
+        
         if(searchQuery.date){
             searchParams.date = formattedDate
         }

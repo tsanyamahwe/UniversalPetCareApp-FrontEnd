@@ -9,11 +9,14 @@ import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import Rating from '../rating/Rating';
 import { getUserById } from '../user/UserService';
 import AlertMessage from '../common/AlertMessage';
+import Paginator from '../common/Paginator';
 
 const Veterinarian = () => {
     const[veterinarian, setVeterinarian] = useState(null);
     const[isLoading, setIsLoading] = useState(true);
     const{vetId} = useParams();
+    const[currentPage, setCurrentPage] = useState(1);
+    const[reviewPerPage] = useState(4);
     
     const{successMessage, errorMessage, setSuccessMessage, setErrorMessage, showSuccessAlert, showErrorAlert, setShowSuccessAlert, setShowErrorAlert} = UseMessageAlerts();
     
@@ -38,7 +41,7 @@ const Veterinarian = () => {
     }, [vetId]);
 
     if(isLoading){
-        return <h1>Loading...</h1>;
+        return <h4>Loading...</h4>;
     };
 
     if (showErrorAlert) {
@@ -61,8 +64,12 @@ const Veterinarian = () => {
         );
     };
 
+    const indexOfLastReview = currentPage * reviewPerPage; 
+    const indexOfFirstReview = indexOfLastReview - reviewPerPage;
+    const currentReviews = veterinarian.reviews.slice(indexOfFirstReview, indexOfLastReview) || [];
+
   return (
-    <Container className='d-flex justify-content-center align-items-center mt-4'> 
+    <Container className='d-flex justify-content-center align-items-center mt-4'>  
         {showErrorAlert && (
             <AlertMessage type={"danger"} message={errorMessage}/>
         )}
@@ -77,36 +84,36 @@ const Veterinarian = () => {
                         />
                     </Col>
                     <Col>
-                        <Link to={"/doctors"}><BsFillArrowRightSquareFill/>back to veterinarians</Link>
+                        <Link to={"/doctors"}><BsFillArrowRightSquareFill/> "Back to Veterinarians"</Link>
                     </Col>
                 </Row>
                 <Card.Body>
                     <Card.Title>Dr. {veterinarian.firstName} {veterinarian.lastName}</Card.Title>
-                    <Card.Title>Specialization: {veterinarian.specialization}</Card.Title>
+                    <Card.Text>Specialization: {veterinarian.specialization}</Card.Text>
                     {veterinarian.averageRating > 0 && (
                         <Card.Text className='rating-stars'>
                             Ratings: (
                                 {veterinarian.averageRating > 0 ? Number(veterinarian.averageRating.toFixed(1)) : "0.0"}
                             )stars
                             <RatingStars rating={veterinarian.averageRating}/> rated by (
-                                {veterinarian.totalReviewers || 0}{" "}
-                                {veterinarian.totalReviewers === 1 ? "person" : "people"}){" "} 
+                                {veterinarian.totalReviewer || 0}{" "}
+                                {veterinarian.totalReviewer === 1 ? "person" : "people"}){" "} 
                         </Card.Text>
                     )}
                     <Link to={`/book-appointment/${veterinarian.id}/new-appointment`} className='link'>Book Appointment</Link>
                     <hr/>
                     <p className='about'>About Dr. {veterinarian.firstName} {veterinarian.lastName}{" "}</p>
-                    <p>With 8 years of veterinary experience, he specializes in small animal surgery and emergency medicine.
+                    <p className='justified-content'>With 8 years of veterinary experience, he specializes in small animal surgery and emergency medicine.
                     He earned his Doctor of Veterinary Medicine degree from Texas A&M University and has since dedicated his
                     career to providing compassionate care for cats and dogs. Outside the clinic, he enjoys photography and 
                     spending time with his three cats.</p>
                     <hr/>
-                    <Rating vetId={vetId} onReviewSubmit={null}/>
+                    <Rating veterinarianId={veterinarian.id} onReviewSubmit={null}/>
                     <h4 className='text-center mb-4'>Reviews</h4>
                     <hr/>
                     {/*Render paginated reviews*/}
-                    {veterinarian && veterinarian.reviews.length > 0 ?(
-                        veterinarian.reviews.map((review) => (
+                    {currentReviews && currentReviews.length > 0 ?(
+                        currentReviews.map((review) => (
                             <Review
                                 key={review.id}
                                 review={review}
@@ -116,6 +123,14 @@ const Veterinarian = () => {
                     ):(
                         <p>No reviews available yet</p>
                     )}
+                    <Paginator
+                        itemsPerPage={reviewPerPage}
+                        totalItems={veterinarian.reviews.length}
+                        paginate={setCurrentPage}
+                        currentPage={currentPage}
+                    >
+
+                    </Paginator>
                 </Card.Body>
             </Card>
         )}
@@ -123,4 +138,4 @@ const Veterinarian = () => {
   )
 }
 
-export default Veterinarian
+export default Veterinarian;

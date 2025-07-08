@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'
 import { Card } from 'react-bootstrap';
+import placeholder from "../../assets/images/placeholder.jpg";
 
-const UserImage = ({userId, placeholder, userPhoto, altText="User Photo"}) => {
+const UserImage = ({userId, userPhoto, altText="User Photo"}) => {
   return (
     <Fragment>
         {userPhoto ? (

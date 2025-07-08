@@ -21,9 +21,13 @@ const AddItemModal = ({show, handleClose, handleSave, itemLabel}) => {
         </Modal.Header>
         <Modal.Body>
             <Form>
-                <Form.Group className='mb-1'>
+                <Form.Group className='mb-2'>
                     <Form.Label>{itemLabel} Name </Form.Label>
-                    <Form.Control type="text" placeholder={`Enter ${itemLabel.toLowerCase()} name`} value={itemValue} onChange={handleInputChange}/>
+                    <Form.Control
+                          type="text"
+                          placeholder={`Enter ${itemLabel.toLowerCase()} name`} 
+                          value={itemValue} 
+                          onChange={handleInputChange}/>
                 </Form.Group>
             </Form>
         </Modal.Body>

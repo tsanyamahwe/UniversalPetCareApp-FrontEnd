@@ -26,3 +26,12 @@ export async function getPetBreeds(petType) {
         throw error;
     }
 }
+
+ export async function savePets(pets) {
+     try{
+         const result = await api.post("pets/save-pets", pets);
+         return result.data;
+     }catch(error){
+          throw error;
+     }
+ }

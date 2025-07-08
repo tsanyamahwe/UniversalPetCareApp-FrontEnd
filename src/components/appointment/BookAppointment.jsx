@@ -9,6 +9,7 @@ import { FaPlus } from 'react-icons/fa';
 import { bookAppointment } from './AppointmentService';
 import AlertMessage from '../common/AlertMessage';
 import ProcessSpinner from '../common/ProcessSpinner';
+import { savePets } from '../pets/PetService';
 
 const BookAppointment = () => {
     const[isProcessing, setIsProcessing] = useState(false);
@@ -19,19 +20,18 @@ const BookAppointment = () => {
         pets: [
             {
                 petName: "",
-                petType: "",
-                petColor: "",
-                petBreed: "",
                 petAge: "",
+                petColor: "",
+                petType: "",
+                petBreed: "",                
             },
-
         ],
     });
 
     const{successMessage, setSuccessMessage, showSuccessAlert, setShowSuccessAlert, errorMessage, setErrorMessage, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const{recipientId} = useParams();
-    const senderId = 3;
+    const senderId = 4;
 
     const handleDateChange = (date) => {
         setFormData((previousState) => ({
@@ -55,20 +55,23 @@ const BookAppointment = () => {
     const handlePetChange = (index, e) => {
         const{name, value} = e.target;
         setFormData((previousState) => ({
-            ...previousState, pets: previousState.pets.map((pet, idx) => idx === index? {...pet, [name]: value}: pet),
+            ...previousState, 
+            pets: previousState.pets.map((pet, idx) => 
+                idx === index ? {...pet, [name]: value} : pet),
         }));
     };
 
     const addPet = () => {
         const newPet = {
             petName: "",
-            petType: "",
-            petColor: "",
-            petBreed: "",
             petAge: "",
+            petColor: "",
+            petType: "",
+            petBreed: "",
         }
         setFormData((previousState) => ({
-            ...previousState, pets: [...previousState.pets, newPet],
+            ...previousState, 
+            pets: [...previousState.pets, newPet],
         }));
     };
 
@@ -89,10 +92,11 @@ const BookAppointment = () => {
         //Constructing an array of pet objects from formData.pets
         const pets = formData.pets.map((pet) =>({
             name: pet.petName,
-            type: pet.petType,
+            age: pet.petAge,
             color: pet.petColor,
+            type: pet.petType,
             breed: pet.petBreed,
-            age: pet.petAge, 
+             
         }))
 
         const appointmentRequest = {
@@ -108,16 +112,27 @@ const BookAppointment = () => {
 
         try {
             console.log("The appointment request :", appointmentRequest);
-            const response = await bookAppointment(senderId, recipientId, appointmentRequest);
-            //const response1 = await savePets(addPet)
-            console.log("The appointment response :", response);
-            setSuccessMessage(response.message);
-           // setSuccessMessage(response1.message);
+            console.log("The pets to save :", pets);
+
+            const appointmentResponse = await bookAppointment(senderId, recipientId, appointmentRequest);
+            console.log("The appointment response :", appointmentResponse);
+
+            const appointmentId = appointmentResponse.appointment_id;
+            const petsWithAppointmentId = pets.map(pet => ({
+                ...pet, appointment_id: appointmentId,
+            }))
+
+            const petResponse = await savePets(petsWithAppointmentId);
+            console.log("The pet save response :", petResponse);
+
+            const combinedMessage = `${appointmentResponse.message} ${petResponse.message}`;
+            setSuccessMessage(combinedMessage);
+            
             handleReset();
             setShowSuccessAlert(true);
         } catch (error) {
-            console.log("The appointment error :", error);
-            setErrorMessage(error.response.data.message);
+            console.log("The error :", error);
+            setErrorMessage(error.response?.data?.message || 'An error occured');
             setShowErrorAlert(true);
         }finally{
             setTimeout(() => {
@@ -134,10 +149,10 @@ const BookAppointment = () => {
             pets: [
                 {
                     petName: "",
-                    petType: "",
-                    petColor: "",
-                    petBreed: "",
                     petAge: "",
+                    petColor: "",
+                    petType: "",
+                    petBreed: "",
                 },
             ],
         });

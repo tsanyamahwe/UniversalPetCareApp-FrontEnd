@@ -1,8 +1,8 @@
 import React from 'react';
-import { Accordion, Card, Col, Placeholder } from 'react-bootstrap';
-import placeholder from "../../assets/images/placeholder.jpg";
+import { Accordion, Card, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import UserImage from '../common/UserImage';
+import RatingStars from '../rating/RatingStars';
 
 const VeterinarianCard = ({vet}) => {
   return (
@@ -12,13 +12,13 @@ const VeterinarianCard = ({vet}) => {
                 <Accordion.Header>
                     <div className="d-flex align-items-center">
                         <Link>
-                           <UserImage userId={vet.id} userPhoto={vet.photo} placeholder={placeholder}/>
+                           <UserImage userId={vet.id} userPhoto={vet.photo}/>
                         </Link>
                     </div>
-                    <div className='flex-grow-2 ml-3 px-5'>
+                    <div className='flex-grow-1 ml-3 px-5'>
                         <Card.Title className="title">Dr. {vet.firstName} {vet.lastName}</Card.Title>
                         <Card.Title><h6>{vet.specialization}</h6></Card.Title>
-                        <Card.Text className="review rating-stars">Reviews: Some stars</Card.Text>
+                        <Card.Text className="review rating-stars">Reviews: <RatingStars stars={vet.averageRating}/>({vet.totalReviewer})</Card.Text>
                         <Link to={`/book-appointment/${vet.id}/new-appointment`} className="link">Book Appointment</Link>
                     </div>
                 </Accordion.Header>

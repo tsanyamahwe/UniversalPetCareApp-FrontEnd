@@ -45,7 +45,12 @@ const PetBreedSelector = ({petType, value, onChange}) => {
     <React.Fragment>
         <div>
             <Form.Group as={Col} controlId='petBreed'>
-                <Form.Control as="select" name="petBreed" value={value} required onChange={handleBreedChange}>
+                <Form.Control 
+                    as="select" 
+                    name="petBreed" 
+                    value={value} 
+                    required 
+                    onChange={handleBreedChange}>
                     <option value=''>select breed</option>   
                     <option value='add-new-item'>Add New Item</option>
                     {petBreeds.map((breed) => (
@@ -53,7 +58,11 @@ const PetBreedSelector = ({petType, value, onChange}) => {
                     ))}                
                 </Form.Control>                
             </Form.Group>
-            <AddItemModal show={showModal} handleClose={() => setShowModal(false)} handleSave={handleSaveNewItem} itemLabel={'Breed'}/>
+            <AddItemModal 
+                show={showModal} 
+                handleClose={() => setShowModal(false)} 
+                handleSave={handleSaveNewItem} 
+                itemLabel={'Breed'}/>
         </div>
     </React.Fragment>
   );
