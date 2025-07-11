@@ -5,6 +5,7 @@ import AlertMessage from '../common/AlertMessage';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import { Link } from 'react-router-dom';
 import VetSpecializationSelector from '../veterinarian/VetSpecializationSelector';
+import { userRegistration } from './UserService';
 
 const UserRegistration = () => {
     const[user, setUser] = useState({
@@ -41,9 +42,10 @@ const UserRegistration = () => {
 
         setIsProcessing(true);
         try {
-            const response = await UserRegistration(user);
+            const response = await userRegistration(user);
             setSuccessMessage(response.message);
             setShowSuccessAlert(true);
+            setIsProcessing(false);
             handleReset();
         } catch (error) {
             setErrorMessage(error.response?.data?.message || "Registration failed. Please try again.");
@@ -64,9 +66,6 @@ const UserRegistration = () => {
             userType: "",
             specialization: "",
         });
-        // Clear any existing alerts
-        setShowErrorAlert(false);
-        setShowSuccessAlert(false);
     };
 
     // Clear specialization when user type changes away from VET
