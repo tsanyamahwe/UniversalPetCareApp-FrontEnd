@@ -103,3 +103,14 @@ h5 {
     max-width: 65ch; /* Optimal line length for readability */
     margin: 0 auto;
 }
+
+/*Start active and inactive users status*/
+.inactive{
+  color: orange;
+  font-weight: normal;
+}
+
+.active{
+  color: green;
+  font-weight: normal;
+}

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
+import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap';
 import UserImage from '../common/UserImage';
 import { Link } from 'react-router-dom';
 import PhotoUploaderModal from '../modals/PhotoUploaderModal';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
 
-const UserProfile = ({user, handlePhotoRemoval}) => {
+const UserProfile = ({user, handlePhotoRemoval, handleCloseAccount}) => {
     const[showPhotoUploaderModal, setShowPhotoUploaderModal] = useState(false);
     const[showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
@@ -23,7 +23,7 @@ const UserProfile = ({user, handlePhotoRemoval}) => {
                         <UserImage userId={user.id} userPhoto={user.photo}/>
                     </Card.Body>
                     <div className='text-center'> 
-                             <Link to={"#"} onClick={handleShowPhotoUploaderModal}>Update Photo</Link> 
+                            <Link to={"#"} onClick={handleShowPhotoUploaderModal}>Update Photo</Link> 
                             <PhotoUploaderModal 
                                 userId={user.id} 
                                 show={showPhotoUploaderModal}
@@ -75,17 +75,55 @@ const UserProfile = ({user, handlePhotoRemoval}) => {
                             <Card.Text>{user.userType}</Card.Text>
                         </Col>
                     </Card.Body>
+                    {user.userType === "VET" && (
+                        <Card.Body className='d-flex align-items-center'>
+                            <Col md={4}>Specialization:</Col>
+                            <Col md={4}>
+                                <Card.Text>{user.specialization}</Card.Text>
+                            </Col>
+                        </Card.Body>
+                    )}
                     <Card.Body className='d-flex align-items-center'>
                         <Col md={4}>Account Status:</Col>
                         <Col md={4}>
-                            <Card.Text>{user.isEnabled}</Card.Text>
+                            <Card.Text className={user.enabled ? "active" : "inactive"}>
+                                <b>{user.enabled ? "Active" : "Inactive"}</b>
+                            </Card.Text>
                         </Col>
                     </Card.Body>
                 </Card>
+                <Card className='mb-3 shadow'>
+                    <Card.Body className='d-flex align-items-center'>
+                        <Col md={2}>Role(s):</Col>
+                        <Col md={4}>
+                            <ListGroup variant='flush'>
+                                {user.roles && user.roles.map((role, index) => (
+                                    <ListGroup.Item key={index} className='text-success'>
+                                        {role ? role.replace("ROLE_", "") : ""}
+                                    </ListGroup.Item>
+                                ))}
+                            </ListGroup>
+                        </Col>
+                    </Card.Body>
+                </Card>
+                <Card.Body>
+                    <div className='d-flex justify-content-center mb-4'>
+                        <div className='mx-2'>
+                            <Link to={""} className='btn btn-warning btn-sm'>
+                                Edit Profile
+                            </Link>
+                        </div>
+                        <div className='mx-2'>
+                            <Button variant='danger' size='sm' onClick={handleCloseAccount}>
+                                Close account
+                            </Button>
+                        </div>
+                    </div>
+                </Card.Body>
             </Col>
         </Row>
     </React.Fragment>
   )
 }
 
-export default UserProfile
+export default UserProfile;
