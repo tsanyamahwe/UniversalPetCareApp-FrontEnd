@@ -27,3 +27,21 @@ export async function changeUserPassword(userId, currentPassword, newPassword, c
         throw error;
     }
 }
+
+export async function updateUser(userData, userId) {
+    try {
+        const response = await api.put(`/users/update/${userId}`, userData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }    
+}
+
+export async function deleteUserAccount(userId) {
+    try {
+        const response = await api.delete(`users/delete/${userId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
