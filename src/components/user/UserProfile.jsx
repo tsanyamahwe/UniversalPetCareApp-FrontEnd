@@ -36,7 +36,7 @@ const UserProfile = ({user, handlePhotoRemoval, handleCloseAccount, handleDelete
     };
 
   return (
-    <Container>
+    <Container className='shadow'>
         <DeleteConfirmationModal
             show={showDeleteModal}
             onHide={handleCloseDeleteModal}
@@ -45,7 +45,7 @@ const UserProfile = ({user, handlePhotoRemoval, handleCloseAccount, handleDelete
         />
         <React.Fragment>   
             <Row>
-                <Col md={2}>
+                <Col md={3}>
                     <Card className='text-center mb-3 shadow'>
                         <Card.Body>
                             <UserImage userId={user.id} userPhoto={user.photo}/>
@@ -65,7 +65,7 @@ const UserProfile = ({user, handlePhotoRemoval, handleCloseAccount, handleDelete
                         </div>
                     </Card>
                 </Col>   
-                <Col md={10}>
+                <Col md={9}>
                     <Card className='mb-3 shadow'>
                         <Card.Body className='d-flex align-items-center'>
                             <Col md={4}>First Name:</Col>

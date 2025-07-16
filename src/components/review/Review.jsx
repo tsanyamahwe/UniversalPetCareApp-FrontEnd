@@ -1,10 +1,10 @@
-import React from 'react'
-import { UserType } from '../utils/Utilities'
-import UserImage from '../common/UserImage'
-import RatingStars from '../rating/RatingStars'
+import React from 'react';
+import { UserType } from '../utils/Utilities';
+import UserImage from '../common/UserImage';
+import RatingStars from '../rating/RatingStars';
 
 const Review = ({review, userType}) => {
-    const displayName = userType === userType.PATIENT ? `You rated Dr. ${review.veterinarianName}`: `Reviewed by: ${review.patientName}`
+    const displayName = userType === UserType.PATIENT ? `You rated Dr. ${review.veterinarianName}`: `Reviewed by: ${review.patientName}`;
   return (
     <div className='mb-4'>
         <div className='d-flex align-item-center me-5'>

@@ -114,3 +114,19 @@ h5 {
   color: green;
   font-weight: normal;
 }
+
+.shadow {
+  box-shadow: 0 4px 6px -1px rgba(252, 252, 252, 0.1), 0 2px 4px -1px rgba(252, 252, 252, 0.06);
+}
+
+.review-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
