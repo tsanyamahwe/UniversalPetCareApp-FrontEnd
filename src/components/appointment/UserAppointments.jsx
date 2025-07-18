@@ -1,22 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Accordion, Button, Col, Container, Row } from 'react-bootstrap';
 import ReactDatePicker from 'react-datepicker';
 import PetsTable from '../pets/PetsTable';
+import { formatAppointmentStatus, UserType } from '../utils/Utilities';
+import useColorMapping from '../hooks/ColorMapping';
+import PatientActions from '../actions/PatientActions';
+import VeterinarianActions from '../actions/VeterinarianActions';
+import { updateAppointment } from './AppointmentService';
+import UseMessageAlerts from '../hooks/UseMessageAlerts';
 
-const UserAppointments = ({appointments}) => {
-    const handlePetsUpdate = () => {
+const UserAppointments = ({user, appointments:initialAppointments}) => {
+    const[appointments, setAppointments] = useState(initialAppointments);
+    const handlePetsUpdate = () => {};
+    const colors = useColorMapping();
 
+    const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
+
+
+    //For Veterinarians:
+    //1. Approve Appointment
+    const handleApproveAppointment = () => {}
+    //2. Decline Appointment
+    const handleDeclineAppointment = () => {}
+
+    //For Patients
+    //1. Update Appointment
+    const handleUpdateAppointment = async (updatedAppointment) => {
+        try {
+            const result = await updateAppointment(updatedAppointment.id, updatedAppointment);
+            setAppointments(appointments.map((appointment) => appointment.id === updatedAppointment.id ? updatedAppointment : appointment));
+            console.log("The result from update:", result);
+            setSuccessMessage(result.data.message);
+            setShowSuccessAlert(true);
+        } catch (error) {
+            console.error(error);
+        }
     }
+    //2. Cancel Appointment
+    const handleCancelAppointment = () => {}
+
   return (
     <Container className='p-5'>
         <Accordion className='mt-1 mb-3'>
             {appointments.map((appointment, index) =>{
+                const formattedStatus = formatAppointmentStatus(appointment.status);
+                const statusColor = colors[formattedStatus] || colors["default"];
+                const isWaitingForApproval = formattedStatus === "waiting-for-approval";
                 return(
                     <Accordion.Item eventKey={index} key={index} className='mb-2'>
                         <Accordion.Header>
                             <div>
                                 <div className='mb-3'>Date: {appointment.appointmentDate}</div>
-                                <div>Status: {appointment.status}</div>
+                                <div style={{color: statusColor}}>Status: {formattedStatus}</div>
                             </div>
                         </Accordion.Header>
                         <Accordion.Body>
@@ -51,14 +86,30 @@ const UserAppointments = ({appointments}) => {
                                     pets={appointment.pets}
                                     appointmentId={appointment.id}
                                     onPetsUpdate={handlePetsUpdate}
-                                    isEditable={""}
+                                    isEditable={isWaitingForApproval}
+                                    isPatient={user.userType === UserType.PATIENT}
                                 />
                                 </Col>
                             </Row>
-                            <div>
-                                <Button variant='warning' size='sm'>Update Appointment</Button>
-                                <Button variant='danger' size='sm' className='ms-2'>Cancel Appointment</Button>
-                            </div>
+                            {user && user.userType === UserType.PATIENT && (
+                                <div>
+                                    <PatientActions
+                                        onCancel={handleCancelAppointment}
+                                        onUpdate={handleUpdateAppointment}
+                                        isDisabled={!isWaitingForApproval}
+                                    />
+                                </div>
+                            )}
+                            {user && user.userType === UserType.VET && (
+                                <div>
+                                    <VeterinarianActions
+                                        onDecline={handleDeclineAppointment}
+                                        onApprove={handleApproveAppointment}
+                                        isDisabled={!isWaitingForApproval}
+                                    />
+                               </div>
+                            )}
+                            
                         </Accordion.Body>
                     </Accordion.Item>
                 );

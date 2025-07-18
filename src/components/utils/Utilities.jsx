@@ -33,3 +33,7 @@ export const UserType = {
     PATIENT : "PATIENT",
     VET : "VET",
 }
+
+export const formatAppointmentStatus = (status) => {
+    return status.toLowerCase().replace(/_/g, "-");
+}

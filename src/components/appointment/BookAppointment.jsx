@@ -31,7 +31,7 @@ const BookAppointment = () => {
     const{successMessage, setSuccessMessage, showSuccessAlert, setShowSuccessAlert, errorMessage, setErrorMessage, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const{recipientId} = useParams();
-    const senderId = 4;
+    const senderId = 2;
 
     const handleDateChange = (date) => {
         setFormData((previousState) => ({

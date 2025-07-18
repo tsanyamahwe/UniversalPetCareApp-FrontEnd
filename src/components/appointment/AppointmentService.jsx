@@ -9,3 +9,13 @@ export async function bookAppointment(senderId, recipientId, appointmentRequest)
         throw error;
     }
 }
+
+export const updateAppointment = async (appointmentId, appointmentData) => {
+    try {
+        const response = await api.put(`appointments/appointment/${appointmentId}/update`, appointmentData);
+        console.log("Two :", response.data.message);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+} 

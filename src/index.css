@@ -3,6 +3,11 @@
     color: var(--color-white);
     padding: 10px;
 }
+.modal-footer{
+    background-color: var(--color-modal);
+    color: var(--color-white);
+    padding: 10px;
+}
 
 /*Start Nav Bar*/
 .nav-bg{
@@ -79,27 +84,24 @@
     color: var(--color-title);
 }
 
+.field-set{
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    background-color: #f5f5f5;
+}
+
 .review.rating-stars {
-    /* Layout and spacing */
-    /*display: flex;*/
-    /*align-items: center;*/
     gap: 0.1rem;
     margin: 0.2rem 0;
-    
-    /* Typography */
     font-size: 0.0rem;
     line-height: 1;
-    
-    /* Visual styling */
-    color: #c1ced3; /* Gold color for stars */
+    color: #c1ced3; 
     transition: all 0.3s ease;
-    
-    /* Optional: Add subtle background */
     padding: 0.1rem;
     border-radius: 0.1rem;
     background-color: rgba(231, 168, 6, 0.1);
-    
-    /* Accessibility */
     cursor: default;
     user-select: none;
 }
@@ -117,7 +119,7 @@
 
 /* Different star states */
 .review.rating-stars .star.filled {
-    color: #f59e0b; /* Bright gold for filled stars */
+    color: #f59e0b; 
 }
 
 .review.rating-stars .star.half {
@@ -211,11 +213,14 @@
   margin-bottom: 1.5rem;
 }
 
-.field-set {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #fafafa;
+.legend {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-white);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background-color: var(--color-default);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
