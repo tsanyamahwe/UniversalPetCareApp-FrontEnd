@@ -92,10 +92,10 @@
     background-color: #f5f5f5;
 }
 
-.review.rating-stars {
+.review .rating-stars {
     gap: 0.1rem;
     margin: 0.2rem 0;
-    font-size: 0.0rem;
+    font-size: 0.1rem;
     line-height: 1;
     color: #c1ced3; 
     transition: all 0.3s ease;

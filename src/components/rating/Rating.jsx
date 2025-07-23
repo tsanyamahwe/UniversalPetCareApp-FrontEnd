@@ -8,7 +8,7 @@ import { addReview } from '../review/ReviewService';
 const Rating = ({veterinarianId, onReviewSubmit}) => {
     const[hover, setHover] = useState(null);
     const[rating, setRating] = useState(null);
-    const[feedback, setFeedback] = useState(null);
+    const[feedback, setFeedback] = useState("");
 
     const{successMessage, errorMessage, setSuccessMessage, setErrorMessage, showSuccessAlert, showErrorAlert, setShowSuccessAlert, setShowErrorAlert} = UseMessageAlerts();
 
@@ -32,7 +32,6 @@ const Rating = ({veterinarianId, onReviewSubmit}) => {
         };
 
         try {
-            console.log("The review info :", reviewInfo);
             const response = await addReview(veterinarianId, reviewerId, reviewInfo);
             setSuccessMessage(response.message);
             setShowSuccessAlert(true);
@@ -94,7 +93,7 @@ const Rating = ({veterinarianId, onReviewSubmit}) => {
             <div className='mt-2'>
                 <Button type='submit' variant='outline-primary'>Submit Review</Button>
             </div>
-            <p>You have rated this doctor with <span style={{color: "orange"}}>{rating} stars</span></p>
+            <p>You have rated this doctor with {" "} <span style={{color: "orange"}}>{rating} stars</span></p>
         </Form>      
     </React.Fragment>
   )

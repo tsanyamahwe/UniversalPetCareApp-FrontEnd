@@ -13,7 +13,7 @@ const Review = ({review, userType}) => {
             ):(
                 <UserImage userId={review.veterinarianId} userPhoto={review.veterinarianPhoto}/>
             )}
-            <div>
+            <div className='ms-4'>
                 <div>
                     <h5 className='title ms-3'>
                         <RatingStars rating={review.stars}/>

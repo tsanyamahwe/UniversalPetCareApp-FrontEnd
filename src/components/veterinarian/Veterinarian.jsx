@@ -23,13 +23,10 @@ const Veterinarian = () => {
     const getUser = async () => {
         setIsLoading(true);
         try {
-            console.log("The vetId :", vetId);
             const result = await getUserById(vetId);
-            console.log("The response :", result);
             setVeterinarian(result.data);
             setIsLoading(false);
         } catch (error) {
-            console.error("The error message :", error);
             setErrorMessage(error.result.data.message);
             setShowErrorAlert(true);
             setIsLoading(false);
