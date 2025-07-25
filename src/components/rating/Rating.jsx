@@ -13,7 +13,6 @@ const Rating = ({veterinarianId, onReviewSubmit}) => {
     const{successMessage, errorMessage, setSuccessMessage, setErrorMessage, showSuccessAlert, showErrorAlert, setShowSuccessAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const reviewerId = 4;
-    //const {veterinarianId} = useParams();
 
     const handleRatingChange = (value) => {
         setRating(value);

@@ -11,7 +11,7 @@ const PhotoUploaderModal = ({userId, show, handleClose}) => {
 
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
-    userId = 4;
+    userId = 7;
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -41,7 +41,6 @@ const PhotoUploaderModal = ({userId, show, handleClose}) => {
             formData.append("file", file);
 
             //2. check if the user already has a photo
-           
             if(user && user.photo){
                 const reader = new FileReader();
                 reader.readAsArrayBuffer(file);

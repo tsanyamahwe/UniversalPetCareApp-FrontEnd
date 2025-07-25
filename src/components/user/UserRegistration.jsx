@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Card, Container, Form, Row, Col, Button } from 'react-bootstrap';
 import ProcessSpinner from '../common/ProcessSpinner';
 import AlertMessage from '../common/AlertMessage';
@@ -17,18 +17,17 @@ const UserRegistration = () => {
         password: "",
         userType: "",
         specialization: "",
-    })
+    });
 
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
     const[isProcessing, setIsProcessing] = useState(false);
 
     const handleInputChange = (event) => {
         const{name, value} = event.target;
-        console.log('Form input changed:', name, value); // Debug log
         setUser((previousState) => ({
             ...previousState, [name]: value,
         }));
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -124,7 +123,7 @@ const UserRegistration = () => {
                                          required
                                          value={user.gender}
                                          onChange={handleInputChange}>
-                                        <option value=''>...select gender...</option>
+                                        <option value=''>select gender</option>
                                         <option value='Male'>Male</option>
                                         <option value='Female'>Female</option>
                                         <option value='Others'>Others</option>
@@ -139,7 +138,7 @@ const UserRegistration = () => {
                                         <Form.Control
                                             type='email'
                                             name='email'
-                                            placeholder='...email address...'
+                                            placeholder='email address'
                                             value={user.email}
                                             onChange={handleInputChange}
                                             required
@@ -166,7 +165,7 @@ const UserRegistration = () => {
                                        type='password'
                                        name='password'
                                        required
-                                       placeholder='...set your password...'
+                                       placeholder='set your password'
                                        value={user.password}
                                        onChange={handleInputChange}
                                     />
@@ -183,7 +182,7 @@ const UserRegistration = () => {
                                         required
                                         value={user.userType}
                                         onChange={handleUserTypeChange}>
-                                            <option value=''>...select account type..</option>
+                                            <option value=''>select account type</option>
                                             <option value='VET'>I am a Veterinarian</option>
                                             <option value='PATIENT'>I am a pet owner</option>
                                     </Form.Control>

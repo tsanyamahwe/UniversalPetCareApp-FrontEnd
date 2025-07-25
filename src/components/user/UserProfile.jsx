@@ -68,51 +68,51 @@ const UserProfile = ({user, handlePhotoRemoval, handleCloseAccount, handleDelete
                 <Col md={9}>
                     <Card className='mb-3 shadow'>
                         <Card.Body className='d-flex align-items-center'>
-                            <Col md={4}>First Name:</Col>
+                            <Col md={5}>First Name:</Col>
                             <Col md={4}>
                                 <Card.Text>{user.firstName}</Card.Text>
                             </Col>
                         </Card.Body>
                         <Card.Body className='d-flex align-items-center'>
-                            <Col md={4}>Last Name:</Col>
+                            <Col md={5}>Last Name:</Col>
                             <Col md={4}>
                                 <Card.Text>{user.lastName}</Card.Text>
                             </Col>
                         </Card.Body>
                         <Card.Body className='d-flex align-items-center'>
-                            <Col md={4}>Gender:</Col>
+                            <Col md={5}>Gender:</Col>
                             <Col md={4}>
                                 <Card.Text>{user.gender}</Card.Text>
                             </Col>
                         </Card.Body>
                         <Card.Body className='d-flex align-items-center'>
-                            <Col md={4}>Email:</Col>
+                            <Col md={5}>Email:</Col>
                             <Col md={4}>
                                 <Card.Text>{user.email}</Card.Text>
                             </Col>
                         </Card.Body>
                         <Card.Body className='d-flex align-items-center'>
-                            <Col md={4}>Mobile:</Col>
+                            <Col md={5}>Mobile:</Col>
                             <Col md={4}>
                                 <Card.Text>{user.phoneNumber}</Card.Text>
                             </Col>
                         </Card.Body>
                         <Card.Body className='d-flex align-items-center'>
-                            <Col md={4}>User Type:</Col>
+                            <Col md={5}>User Type:</Col>
                             <Col md={4}>
                                 <Card.Text>{user.userType}</Card.Text>
                             </Col>
                         </Card.Body>
                         {user.userType === "VET" && (
                             <Card.Body className='d-flex align-items-center'>
-                                <Col md={4}>Specialization:</Col>
+                                <Col md={5}>Specialization:</Col>
                                 <Col md={4}>
                                     <Card.Text>{user.specialization}</Card.Text>
                                 </Col>
                             </Card.Body>
                         )}
                         <Card.Body className='d-flex align-items-center'>
-                            <Col md={4}>Account Status:</Col>
+                            <Col md={5}>Account Status:</Col>
                             <Col md={4}>
                                 <Card.Text className={user.enabled ? "active" : "inactive"}>
                                     <b>{user.enabled ? "Active" : "Inactive"}</b>

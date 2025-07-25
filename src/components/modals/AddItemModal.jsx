@@ -31,7 +31,7 @@ const AddItemModal = ({show, handleClose, handleSave, itemLabel}) => {
                 </Form.Group>
             </Form>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer style={{backgroundColor: '#69abb7'}}>
             <Button variant='secondary' onClick={handleSaveItem}> Add </Button>
             <Button variant='danger' onClick={handleClose}> Close </Button>
         </Modal.Footer>
