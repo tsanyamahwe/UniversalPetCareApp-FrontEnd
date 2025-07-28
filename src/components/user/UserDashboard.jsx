@@ -11,7 +11,7 @@ import UserAppointments from '../appointment/UserAppointments';
 const UserDashboard = () => {
     const[user, setUser] = useState(null);
     const[appointments, setAppointments] = useState([]);
-    const userId = 2;
+    const userId = 7;
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     useEffect(() => {

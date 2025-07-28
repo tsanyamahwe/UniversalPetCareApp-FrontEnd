@@ -15,7 +15,7 @@ const ChangePasswordModal = ({userId, show, handleClose}) => {
         newPassword: "",
         confirmNewPassword: "",
     });
-    userId = 1;
+    userId = 2;
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const handleInputChange = (e) => {

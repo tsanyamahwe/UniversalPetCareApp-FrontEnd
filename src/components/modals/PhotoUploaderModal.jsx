@@ -11,7 +11,7 @@ const PhotoUploaderModal = ({userId, show, handleClose}) => {
 
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
-    userId = 7;
+    userId = 2;
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
