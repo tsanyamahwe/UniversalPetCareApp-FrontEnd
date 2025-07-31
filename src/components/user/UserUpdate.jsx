@@ -147,33 +147,34 @@ const UserUpdate = () => {
                             <Form.Group controlId='specialization' className='mb-4'>
                                 <Form.Label className='legend'>Specialization</Form.Label>
                                 <VetSpecializationSelector
-                                    handleAddSpecialization={handleInputChange}
+                                    onChange={handleInputChange}
+                                    value={userData.specialization}
                                     userData={userData}
                                 />
                             </Form.Group>
                         )}  
                         <div className='d-flex justify-content-center'>
-                                <div className='mx-2'>
-                                <Button
-                                    type='submit'
-                                    variant='outline-warning'
-                                    size='sm'
-                                    disabled={isProcessing}>
-                                    {isProcessing ? (
-                                        <ProcessSpinner message='Processing update...'/>
-                                    ):(
-                                        "Update"
-                                    )}
-                                </Button>
-                                </div>
-                                <div className='mx-2'>
+                            <div className='mx-2'>
+                            <Button
+                                type='submit'
+                                variant='outline-warning'
+                                size='sm'
+                                disabled={isProcessing}>
+                                {isProcessing ? (
+                                    <ProcessSpinner message='Processing update...'/>
+                                ):(
+                                    "Update"
+                                )}
+                            </Button>
+                            </div>
+                            <div className='mx-2'>
                                 <Button
                                     variant='outline-info'
                                     size='sm'
                                     onClick={handleCancelEdit}>
                                     Back to profile
                                 </Button>
-                                </div>
+                            </div>
                         </div>                
                     </Card.Body>                        
                 </Card>

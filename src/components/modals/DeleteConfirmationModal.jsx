@@ -1,14 +1,14 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap'
 
-const DeleteConfirmationModal = ({show, onHide, onConfirm, itemToDelete, loading}) => {
+const DeleteConfirmationModal = ({show, onHide, onConfirm, itemToDelete}) => {
   return (
     <Modal show={show} onHide={onHide}>
         <Modal.Header closeButton>
             <Modal.Title>Delete Confirmation</Modal.Title>
         </Modal.Header> 
-        <Modal.Body>Are you sure you want to delete {itemToDelete}? This action cannot be reversed.</Modal.Body>  
-        <Modal.Footer>
+        <Modal.Body>Are you sure you want to delete this {itemToDelete}? This cannot be reversed.</Modal.Body>  
+        <Modal.Footer style={{backgroundColor: '#8de2f1ff'}}>
             <Button variant='secondary' onClick={onHide}>Cancel</Button>{""} 
             <Button variant='danger' onClick={onConfirm}>Delete</Button>
         </Modal.Footer>  

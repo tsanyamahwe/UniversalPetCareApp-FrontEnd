@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 
-export const useAlertWithTimeout = (initialVisibility = false, duration = 10000) => {
+export const useAlertWithTimeout = (initialVisibility = false, duration = 3000) => {
     const[isVisible, setIsVisible] = useState(initialVisibility);
 
     useEffect(() => {

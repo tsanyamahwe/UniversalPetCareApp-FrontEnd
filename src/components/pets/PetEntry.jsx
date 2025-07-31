@@ -8,7 +8,7 @@ import { FaMinus } from 'react-icons/fa';
 const PetEntry = ({pet, index, removePet, canRemove, handleInputChange}) => {
   return (
     <fieldset className='field-set mb-4'>
-        <legend className='legend'><h6>{`Pet #${index + 1} details`}</h6></legend>
+        <legend className='legend'><h5>{`Pet #${index + 1} details`}</h5></legend>
         <div>
             <fieldset className='field-set mb-4'>
                 <Form.Group as={Row}>
@@ -40,7 +40,7 @@ const PetEntry = ({pet, index, removePet, canRemove, handleInputChange}) => {
                     onChange={handleInputChange}/>
             </Form.Group>
             <fieldset className='field-set mb-4'>
-                <legend className='legend'><h6>Pet Type and Breed</h6></legend>
+                <legend className='legend'><h5>Pet Type and Breed</h5></legend>
                 <Form.Group as={Row} className='mb-2 d-flex'>
                     <Col>
                          <PetTypeSelector 

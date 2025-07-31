@@ -6,7 +6,7 @@ import PhotoUploaderModal from '../modals/PhotoUploaderModal';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
 import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
 
-const UserProfile = ({user, handlePhotoRemoval, handleCloseAccount, handleDeleteAccount}) => {
+const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
     const[showPhotoUploaderModal, setShowPhotoUploaderModal] = useState(false);
     const[showChangePasswordModal, setShowChangePasswordModal] = useState(false);
     const[showDeleteModal, setShowDeleteModal] = useState(false);

@@ -32,7 +32,8 @@ const PetColorSelector = ({ value, onChange }) => {
     const handleSaveNewItem = (newItem) => {
         if(newItem && !petColors.includes(newItem)){
             setPetColors([...petColors, newItem]);
-            onChange({ target: {name: "petColor", value: newItem}});
+            onChange({ target: {name: "Color", value: newItem}});
+            setShowModal(false);
         }
     };
 

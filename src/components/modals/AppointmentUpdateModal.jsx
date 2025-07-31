@@ -87,7 +87,7 @@ const AppointmentUpdateModal = ({show, handleClose, appointment, handleUpdate}) 
                 </Form>
             </Modal.Body>
             
-            <Modal.Footer>
+            <Modal.Footer style={{backgroundColor: '#8de2f1ff'}}>
                 <Button variant='secondary' onClick={handleClose}>Close</Button>
                 <Button variant='info' onClick={handleSubmit}>Save Update</Button>
             </Modal.Footer>
