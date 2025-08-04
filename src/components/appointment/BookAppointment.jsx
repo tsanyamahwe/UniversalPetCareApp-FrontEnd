@@ -31,7 +31,7 @@ const BookAppointment = () => {
     const{successMessage, setSuccessMessage, showSuccessAlert, setShowSuccessAlert, errorMessage, setErrorMessage, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const{recipientId} = useParams();
-    const senderId = 14;
+    const senderId = 17;
 
     const handleDateChange = (date) => {
         setFormData((previousState) => ({
@@ -46,9 +46,10 @@ const BookAppointment = () => {
     };
 
     const handleInputChange = (e) => {
-        const{name, value} = e.target;
-        setFormData((previousState) => ({
-            ...previousState, [name]: value,
+        const {name, value} = e.target;
+        setFormData(previousState => ({
+            ...previousState,
+            [name]: value
         }));
     };
 

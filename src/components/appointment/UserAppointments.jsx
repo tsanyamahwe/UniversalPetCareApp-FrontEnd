@@ -16,7 +16,6 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
 
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
-
     //For Veterinarians:
     //1. Approve Appointment
     const handleApproveAppointment = () => {}
@@ -57,13 +56,9 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
                         <Accordion.Body>
                             <Row>
                                 <Col md={4} className='mt-2'>
-                                    <p>
-                                        Appointment Number: {""}<span className='text-info'>{appointment.appointmentNo}</span>{""}
-                                    </p>
+                                    <p>Appointment Number: {""}<span className='text-info'>{appointment.appointmentNo}</span>{""}</p>
                                     <ReactDatePicker
-                                        selected={
-                                            new Date(`${appointment.appointmentDate}T${appointment.appointmentTime}`)
-                                        }
+                                        selected={new Date(`${appointment.appointmentDate}T${appointment.appointmentTime}`)}
                                         showTimeSelect
                                         timeFormat='HH:mm'
                                         timeIntervals={30}
@@ -71,13 +66,7 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
                                         dateFormat='MMMM d, yyyy h:mm aa'
                                         inline
                                     />
-                                    <p>
-                                        Time:
-                                        <span className='text-info'>
-                                            {""}
-                                            {appointment.appointmentTime}
-                                        </span>{""}
-                                    </p>
+                                    <p>Time:<span className='text-info'>{""}{appointment.appointmentTime}</span>{""}</p>
                                     <p>Reason: {appointment.reason}</p>
                                 </Col>
                                 <Col md={8} className='mt-2'>

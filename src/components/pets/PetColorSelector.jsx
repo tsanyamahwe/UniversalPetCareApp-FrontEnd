@@ -30,9 +30,9 @@ const PetColorSelector = ({ value, onChange }) => {
 
     //2. handle save new items
     const handleSaveNewItem = (newItem) => {
-        if(newItem && !petColors.includes(newItem)){
-            setPetColors([...petColors, newItem]);
-            onChange({ target: {name: "Color", value: newItem}});
+        if(newItem && !petColors.some(color => color.toLowerCase() === newItem.toLowerCase())){
+            setPetColors(petColors => [...petColors, newItem]);
+            onChange({ target: {name: "petColor", value: newItem}});
             setShowModal(false);
         }
     };

@@ -7,11 +7,12 @@ import { deleteUserPhoto } from '../photo/PhotoUploaderService';
 import AlertMessage from '../common/AlertMessage';
 import Review from '../review/Review';
 import UserAppointments from '../appointment/UserAppointments';
+import { UserType } from '../utils/Utilities';
 
 const UserDashboard = () => {
     const[user, setUser] = useState(null);
     const[appointments, setAppointments] = useState([]);
-    const userId = 14;
+    const userId = 17;
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     useEffect(() => {
@@ -43,11 +44,9 @@ const UserDashboard = () => {
     const handleDeleteAccount = async () => {
         try {
             const response = await deleteUserAccount(userId);
-            console.log("The response from the delete account: ", response);
             setSuccessMessage(response.message);
             setShowSuccessAlert(true);
         } catch (error) {
-            console.log("The response from the delete account: ", error);
             setErrorMessage(error.response.data.message);
             setShowErrorAlert(true);
         }
@@ -67,9 +66,7 @@ const UserDashboard = () => {
                         />
                     )}
                 </Tab>
-                <Tab eventKey='status' title={<h5>Appointments</h5>}>
-
-                </Tab>
+                <Tab eventKey='status' title={<h5>Appointments</h5>}></Tab>
                 <Tab eventKey='appointments' title={<h5>Appointment Details</h5>}>
                     <Row>
                         <Col>
@@ -94,9 +91,15 @@ const UserDashboard = () => {
                                 <Col>
                                     {user && user.reviews && user.reviews.length > 0 ? (
                                         user.reviews.map((review, index) => (
-                                            <Review key={index} review={review}/>
+                                            <Review 
+                                                key={index} 
+                                                review={review}
+                                                userType={user.userType || UserType.PATIENT}
+                                            />
                                         ))
-                                    ):(<p>No reviews found</p>)}
+                                    ):(
+                                        <p>No reviews found</p>
+                                    )}
                                 </Col>
                             </Row>
                         </Card>

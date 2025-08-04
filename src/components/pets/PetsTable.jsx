@@ -57,7 +57,7 @@ const PetsTable = ({pets, appointmentId, onPetsUpdate, isEditable, isPatient}) =
     <section>
         <DeleteConfirmationModal
             show={showDeleteModal}
-            onHide={()=> setShowDeleteModal(false)}
+            onHide={() => setShowDeleteModal(false)}
             onConfirm={handleDeletePet}
             itemToDelete='pet'
         />  
