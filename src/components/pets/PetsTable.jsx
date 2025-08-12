@@ -5,6 +5,7 @@ import { Button, Table } from 'react-bootstrap';
 import EditablePetRow from './EditablePetRow';
 import { BsPencilFill, BsTrashFill } from 'react-icons/bs';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
+import { updatePet } from './PetService';
 
 const PetsTable = ({pets, appointmentId, onPetsUpdate, isEditable, isPatient}) => {
     const[editModeId, setEditModeId] = useState(null);
@@ -43,7 +44,7 @@ const PetsTable = ({pets, appointmentId, onPetsUpdate, isEditable, isPatient}) =
 
     const handlePetSaveUpdate = async (petId, updatedPet) => {
         try {
-            const response = await updatedPet(petId, updatedPet);
+            const response = await updatePet(petId, updatedPet);
             setSuccessMessage(response.message);
             setEditModeId(null);
             setShowSuccessAlert(true);

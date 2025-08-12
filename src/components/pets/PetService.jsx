@@ -35,3 +35,12 @@ export async function getPetBreeds(petType) {
           throw error;
      }
  }
+
+ export async function updatePet(petId, updatedPet) {
+    try {
+        const result = await api.post(`/pets/pet/${petId}/update`, updatedPet);
+        return result.data;
+    } catch (error) {
+        throw error;
+    }
+ }
