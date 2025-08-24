@@ -9,8 +9,8 @@
   --color-approved:  #54b1b1;
   --color-not-approved:  #d55713;
   --color-default:  #445566;
-  --color-title:  #778899;
-  --color-modal:  #8de2f1ff;
+  --color-title:  #155697;
+  --color-modal:  #64959c;
   --color-nav-home:  #daa520;
   --color-white:  #ffffff;
   --color-primary:  #87cefa;
@@ -135,17 +135,6 @@ h6{
     margin: 0 auto;
 }
 
-/*Start active and inactive users status*/
-.inactive{
-  color: orange;
-  font-weight: normal;
-}
-
-.active{
-  color: green;
-  font-weight: normal;
-}
-
 .shadow {
   box-shadow: 0 4px 6px -1px rgba(252, 252, 252, 0.1), 0 2px 4px -1px rgba(252, 252, 252, 0.06);
 }
@@ -161,3 +150,12 @@ h6{
   position: relative;
   overflow: hidden;
 }
+
+.user-dashboard {
+    background-color: rgb(238, 233, 233); /* Smoke white */
+    /* You can also try these alternatives: */
+    /* background-color: #F8F8FF; */ /* Ghost white */
+    /* background-color: #FFFAFA; */ /* Snow */
+    /* background-color: #F0F8FF; */ /* Alice blue - very light */
+}
+

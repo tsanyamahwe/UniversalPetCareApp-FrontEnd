@@ -7,13 +7,20 @@ import { deleteUserPhoto } from '../photo/PhotoUploaderService';
 import AlertMessage from '../common/AlertMessage';
 import Review from '../review/Review';
 import UserAppointments from '../appointment/UserAppointments';
-import { UserType } from '../utils/Utilities';
+import { formatAppointmentStatus, UserType } from '../utils/Utilities';
+import CustomPieChart from '../charts/CustomPieChart';
+import NoDataAvailable from '../common/NoDataAvailable';
 
 const UserDashboard = () => {
     const[user, setUser] = useState(null);
     const[appointments, setAppointments] = useState([]);
+    const[appointmentData, setAppointmentData] = useState();
     const userId = 17;
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
+    const[activeKey, setActiveKey] = useState(() => {
+        const storedActiveKey = localStorage.getItem("activeKey");
+        return storedActiveKey ? storedActiveKey : "profile";
+    });
 
     useEffect(() => {
         const getUser = async () => {
@@ -29,6 +36,28 @@ const UserDashboard = () => {
         };
         getUser();
     }, [userId]);
+
+    useEffect(() => {
+        if(user && user.appointments){
+            const statusCounts = user.appointments.reduce((acc, appoointment) => {
+                const formattedStatus = formatAppointmentStatus(appoointment.status);
+                if(!acc[formattedStatus]){
+                    acc[formattedStatus] = {
+                        name: formattedStatus,
+                        value: 1,
+                    };
+                }else{
+                    acc[formattedStatus].value += 1;
+                }
+                return acc;
+            }, {});
+
+            const transformedData = Object.values(statusCounts);
+            setAppointmentData(transformedData);
+            setAppointments(user.appointments);
+            console.log("Here is the transform data: ", transformedData);
+        }
+    }, [user]);
 
     const handlePhotoRemoval = async () => {
         try {
@@ -50,13 +79,18 @@ const UserDashboard = () => {
             setErrorMessage(error.response.data.message);
             setShowErrorAlert(true);
         }
+    };
+
+    const handleTabSelect = (key) => {
+        setActiveKey(key);
+        localStorage.setItem("activeKey", key);
     }
 
   return (
-    <Container className='mt-2 user-dashboard'>
+    <Container className='mt-2 user-dashboard' >
         {showErrorAlert && (<AlertMessage type={"danger"} message={errorMessage}/>)}
         {showSuccessAlert && (<AlertMessage type={"success"} message={successMessage}/>)}
-            <Tabs className='mb-2' justify>
+            <Tabs className='mb-1' justify activeKey={activeKey} onSelect={handleTabSelect}>
                 <Tab eventKey='profile' title={<h5>Profile</h5>}>
                     {user && (
                         <UserProfile
@@ -66,7 +100,18 @@ const UserDashboard = () => {
                         />
                     )}
                 </Tab>
-                <Tab eventKey='status' title={<h5>Appointments</h5>}></Tab>
+                <Tab eventKey='status' title={<h5>Appointments Overview</h5>}>
+                    <Row>
+                        <Col>
+                            {appointmentData && appointmentData.length > 0 ? (
+                                <CustomPieChart data={appointmentData}/>
+                            ):(
+                                <NoDataAvailable dataType={"Appointment Overview Data"}/>
+                            )}
+                            
+                        </Col>
+                    </Row>
+                </Tab>
                 <Tab eventKey='appointments' title={<h5>Appointment Details</h5>}>
                     <Row>
                         <Col>
@@ -75,7 +120,7 @@ const UserDashboard = () => {
                                 {appointments && appointments.length > 0 ? (
                                     <UserAppointments user={user} appointments={appointments}/>
                                 ):(
-                                    <p>No data</p>
+                                    <NoDataAvailable dataType={"Appointment Data"}/>
                                 )}
                             </React.Fragment>
                             )}
@@ -98,7 +143,7 @@ const UserDashboard = () => {
                                             />
                                         ))
                                     ):(
-                                        <p>No reviews found</p>
+                                        <NoDataAvailable dataType={"Review Data"}/>
                                     )}
                                 </Col>
                             </Row>

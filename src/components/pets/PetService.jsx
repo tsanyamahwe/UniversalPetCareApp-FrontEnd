@@ -38,9 +38,28 @@ export async function getPetBreeds(petType) {
 
  export async function updatePet(petId, updatedPet) {
     try {
-        const result = await api.post(`/pets/pet/${petId}/update`, updatedPet);
+        const result = await api.put(`/pets/pet/${petId}/update`, updatedPet);
         return result.data;
     } catch (error) {
         throw error;
     }
  }
+
+ export const deletePet = async (petId) => {
+    try {
+        const response = await api.delete(`/pets/pet/${petId}/delete`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+ }
+
+export const addPet = async (appointmentId, petData) => {
+    try {
+        const response = await api.post(`/pets/save-pet-for-appointment/${appointmentId}`, petData);
+        return response.data;
+    } catch (error) {
+        console.error('Error adding pet:', error);
+        throw new Error(error.message || 'Failed to add pet. Please try again.');
+    }
+};

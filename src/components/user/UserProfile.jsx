@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import PhotoUploaderModal from '../modals/PhotoUploaderModal';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
 import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
+import style from '../../components/user/UserProfile.module.css'
 
 const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
     const[showPhotoUploaderModal, setShowPhotoUploaderModal] = useState(false);
@@ -114,7 +115,7 @@ const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
                         <Card.Body className='d-flex align-items-center'>
                             <Col md={5}>Account Status:</Col>
                             <Col md={4}>
-                                <Card.Text className={user.enabled ? "active" : "inactive"}>
+                                <Card.Text className={user.enabled ? style.active : style.inactive}>
                                     <b>{user.enabled ? "Active" : "Inactive"}</b>
                                 </Card.Text>
                             </Col>

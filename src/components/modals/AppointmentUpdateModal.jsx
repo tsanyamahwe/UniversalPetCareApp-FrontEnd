@@ -9,6 +9,7 @@ const AppointmentUpdateModal = ({show, handleClose, appointment, handleUpdate}) 
 
     // Update state when appointment prop changes
     useEffect(() => {
+        console.log('Appointment prop:', appointment);
         if (appointment) {
             setAppointmentDate(new Date(appointment.appointmentDate));
             setAppointmentTime(new Date(`${appointment.appointmentDate}T${appointment.appointmentTime}`));
@@ -87,7 +88,7 @@ const AppointmentUpdateModal = ({show, handleClose, appointment, handleUpdate}) 
                 </Form>
             </Modal.Body>
             
-            <Modal.Footer style={{backgroundColor: '#8de2f1ff'}}>
+            <Modal.Footer style={{backgroundColor: '#64959c'}}>
                 <Button variant='secondary' onClick={handleClose}>Close</Button>
                 <Button variant='info' onClick={handleSubmit}>Save Update</Button>
             </Modal.Footer>

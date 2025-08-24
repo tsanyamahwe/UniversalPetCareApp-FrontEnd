@@ -11,16 +11,19 @@ const PatientActions = ({onCancel, onUpdate, isDisabled, appointment}) => {
         try {
             if(actionType === "Update"){
                 setShowUpdateModal(true);
+                setIsProcessing(false);
             }else{
-                onCancel()
+                onCancel(appointment.id)
             }            
         } catch (error) {
             console.error(error);
+            setIsProcessing(false);
         }
     };
 
     const handleCloseModal = () => {
         setShowUpdateModal(false);
+        setIsProcessing(false);
     };
 
     const handleUpdateAppointment = async (updatedAppointment) => {
@@ -30,6 +33,7 @@ const PatientActions = ({onCancel, onUpdate, isDisabled, appointment}) => {
             handleCloseModal();
         } catch (error) {
             console.error(error);
+            setIsProcessing(false);
         }
     }
 
@@ -37,7 +41,7 @@ const PatientActions = ({onCancel, onUpdate, isDisabled, appointment}) => {
     <React.Fragment>
         <section className='d-flex justify-content-end gap-2 mt-2 mb-2'>
             <ActionButtons
-                title={"Update Appoinment"}
+                title={"Update Appointment"}
                 variant={"warning"}
                 onClick={() => handleActionClick("Update")}
                 disabled={isDisabled}
@@ -46,7 +50,7 @@ const PatientActions = ({onCancel, onUpdate, isDisabled, appointment}) => {
             <ActionButtons
                 title={"Cancel Appointment"}
                 variant={"danger"}
-                onClick={() => handleActionClick("Cancel")}
+                onClick={() => onCancel(appointment.id)}
                 disabled={isDisabled}
                 isProcessing={isProcessing}
             />
