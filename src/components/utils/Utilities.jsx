@@ -37,3 +37,32 @@ export const UserType = {
 export const formatAppointmentStatus = (status) => {
     return status.toLowerCase().replace(/_/g, "-");
 }
+
+/**The purpose of this code is to generate a unique color based on the input string. The color is generated using a hash function,
+ * which ensuresthat different inpu strings will generate results in different colors. 
+*/
+
+/**Dynamic generator function that takes a single parameter string "str"*/
+export const generateColor = (str) => {
+
+    /**1. The first if-statement checks if the input "str"  is a string and if it has a length greater than zero (0). If the input is
+     * not a string or has a length of 0, the functions returns a default color #8884d8*/ 
+    if(typeof str !== "string" || str.length === 0){
+        return "#8884d8";//Default color
+    }
+    /**2. Hash generation:
+     * The function then initializes a variable hash with the value of 0. It then loops through each character in the str parameter and 
+     * performs a hash calculation using the following formula: 
+     */
+    let hash = 0;
+    for(let i = 0; i < str.length; i++){
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    /**3. Color Generation:
+     * After the hash calculation, the function calculates the hue value by taking the hash value modulo 360. This ensures that the hue
+     * value is within the range 0 to 359 degrees which represents the color wheel. The function the returns a color in the HSL (Hue, 
+     * Saturation, Lightness) color format, using the calculated hue value and setting the saturation to 70% and lightness to 50%.
+     */
+    const hue = hash % 360;
+    return `hsl(${hue}, 70%, 50%)`;
+};
