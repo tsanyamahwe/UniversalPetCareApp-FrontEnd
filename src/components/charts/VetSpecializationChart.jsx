@@ -29,8 +29,8 @@ const VetSpecializationChart = () => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',  width: '60%'}}>
         <h5 className='mt-4 chart-title' style={{ margin: '0 0 10px 0' }}>Veterinarian By Specializations</h5>
-        <ResponsiveContainer width={"100%"} height={380}>
-            <BarChart data={vetSpecialization}>
+        <ResponsiveContainer width={"140%"} height={380}>
+            <BarChart data={vetSpecialization} margin={{top: 5, right: 20, left: 30, bottom: 5}}>
                 <XAxis
                     dataKey='specialization'
                     angle={-30}

@@ -1,15 +1,21 @@
 import React from 'react';
 
-const CardComponent = ({ label, count, IconComponent, className = "", colorVariant = "" }) => {
+const CardComponent = ({className = '', label, count, IconComponent, colorVariant, isLoading = false}) => {
   return (
-    <div className={`admin-card ${colorVariant} ${className}`}>
-      <div className="card-inner">
-        <div>
-          <h6>{label}</h6>
-          <p>{count}</p>
-        </div>
-        <div className="card-icon">
-          <IconComponent/>
+    <div className={`${className}`}>
+      <div className={`admin-card ${colorVariant} ${isLoading ? 'loading' : ''}`}>
+        <div className="card-inner">
+          <div className="card-icon">
+            <IconComponent />
+          </div>
+          <div className="card-content">
+            <div className="card-label">
+              {label}
+            </div>
+            <div className="card-count">
+              {isLoading ? '...' : (count || 0).toLocaleString()}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -17,5 +23,3 @@ const CardComponent = ({ label, count, IconComponent, className = "", colorVaria
 };
 
 export default CardComponent;
-
-/*i used option 1 and i copied the rest of the suggested css, now the color of the card is only an inch on the far left side before the label, the rest of the card is still white.*/

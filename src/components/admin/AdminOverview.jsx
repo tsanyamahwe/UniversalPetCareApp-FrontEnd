@@ -77,7 +77,7 @@ const AdminOverview = () => {
                 <Row>
                     <Col>
                         <div className='chart-container'>
-                            <RegistrationChart/>
+                            <RegistrationChart/> 
                         </div>
                     </Col>
                     <Col>

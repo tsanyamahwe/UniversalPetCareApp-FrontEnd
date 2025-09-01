@@ -34,8 +34,8 @@ const RegistrationChart = () => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',  width: '60%'}}>
         <h5 className='chart-title' style={{ margin: '0 0 10px 0' }}>Users Registrations</h5>
-        <ResponsiveContainer width={"100%"} height={425}>
-            <BarChart data={userData}>
+        <ResponsiveContainer width={"140%"} height={425}>
+            <BarChart data={userData} margin={{top: 5, right: 20, left: 20, bottom: 5}}>
                 <XAxis dataKey='name' angle={-50} textAnchor='end' height={70}/>
                 <YAxis/>
                 <Tooltip/>

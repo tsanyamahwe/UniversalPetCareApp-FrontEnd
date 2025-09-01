@@ -99,3 +99,21 @@ export const aggregateVeterinariansBySpecialization = async () => {
         throw error;
     }
 }
+
+export async function lockUserAccount(userId){
+    try {
+        const result = await api.put(`/users/account/${userId}/lock-user-account`)
+        return result.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function unLockUserAccount(userId){
+    try {
+        const result = await api.put(`/users/account/${userId}/unlock-user-account`)
+        return result.data;
+    } catch (error) {
+        throw error;
+    }
+}

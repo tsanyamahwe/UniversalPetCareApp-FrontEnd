@@ -8,7 +8,7 @@ const DeleteConfirmationModal = ({show, onHide, onConfirm, itemToDelete}) => {
             <Modal.Title>Delete Confirmation</Modal.Title>
         </Modal.Header> 
         <Modal.Body>Are you sure you want to delete this {itemToDelete}? This cannot be reversed.</Modal.Body>  
-        <Modal.Footer style={{backgroundColor: '#8de2f1ff'}}>
+        <Modal.Footer style={{backgroundColor: '#64959c'}}>
             <Button variant='secondary' onClick={onHide}>Cancel</Button>{""} 
             <Button variant='danger' onClick={onConfirm}>Delete</Button>
         </Modal.Footer>  

@@ -48,7 +48,7 @@ const AccountChart = () => {
   return (
     <div>
         <h5 className='mt-4 chart-title' style={{ margin: '0 0 10px 0' }}>Account Activity</h5>
-        <ResponsiveContainer width={"80%"} height={380}>
+        <ResponsiveContainer width={"80%"} height={415}>
             <PieChart>
                 <Pie
                     data={accountData}
