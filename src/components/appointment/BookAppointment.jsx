@@ -31,7 +31,7 @@ const BookAppointment = () => {
     const{successMessage, setSuccessMessage, showSuccessAlert, setShowSuccessAlert, errorMessage, setErrorMessage, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const{recipientId} = useParams();
-    const senderId = 17;
+    const senderId = 92;
 
     const handleDateChange = (date) => {
         setFormData((previousState) => ({
@@ -83,64 +83,66 @@ const BookAppointment = () => {
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        //Extract appointmentDate and appointmentTime from formData
-        const {appointmentDate, appointmentTime} = formData;
-        //Use dateTimerFormatter to format the date and time
-        const {formattedDate, formattedTime} = dateTimeFormatter(appointmentDate, appointmentTime);
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const {appointmentDate, appointmentTime} = formData;
+    const {formattedDate, formattedTime} = dateTimeFormatter(appointmentDate, appointmentTime);
+    const pets = formData.pets.map((pet) =>({
+        name: pet.petName,
+        age: pet.petAge,
+        color: pet.petColor,
+        type: pet.petType,
+        breed: pet.petBreed, 
+    }));
 
-        //Constructing an array of pet objects from formData.pets
-        const pets = formData.pets.map((pet) =>({
-            name: pet.petName,
-            age: pet.petAge,
-            color: pet.petColor,
-            type: pet.petType,
-            breed: pet.petBreed,
-             
+    const appointmentRequest = {
+        appointment: {
+            appointmentDate: formattedDate,
+            appointmentTime: formattedTime,
+            reason: formData.reason,
+        },
+        pets: pets,
+    };
+
+    setIsProcessing(true);
+
+    try {
+        const appointmentResponse = await bookAppointment(senderId, recipientId, appointmentRequest);
+        const appointmentId = appointmentResponse.appointment_id;
+        const petsWithAppointmentId = pets.map(pet => ({
+            ...pet, appointment_id: appointmentId,
         }))
 
-        const appointmentRequest = {
-            appointment: {
-                appointmentDate: formattedDate,
-                appointmentTime: formattedTime,
-                reason: formData.reason,
-            },
-            pets: pets,
-        };
-
-        setIsProcessing(true);
-
-        try {
-            console.log("The appointment request :", appointmentRequest);
-            console.log("The pets to save :", pets);
-
-            const appointmentResponse = await bookAppointment(senderId, recipientId, appointmentRequest);
-            console.log("The appointment response :", appointmentResponse);
-
-            const appointmentId = appointmentResponse.appointment_id;
-            const petsWithAppointmentId = pets.map(pet => ({
-                ...pet, appointment_id: appointmentId,
-            }))
-
-            const petResponse = await savePets(petsWithAppointmentId);
-            console.log("The pet save response :", petResponse);
-
-            const combinedMessage = `${appointmentResponse.message} ${petResponse.message}`;
-            setSuccessMessage(combinedMessage);
-            
-            handleReset();
-            setShowSuccessAlert(true);
-        } catch (error) {
-            console.log("The error :", error);
-            setErrorMessage(error.response?.data?.message || 'An error occured');
-            setShowErrorAlert(true);
-        }finally{
-            setTimeout(() => {
-                setIsProcessing(false);
-            }, 3000)  
+        const petResponse = await savePets(petsWithAppointmentId);
+        const combinedResponse = `${appointmentResponse.message} ${petResponse.message}`;
+        setSuccessMessage(combinedResponse);
+        handleReset();
+        setShowSuccessAlert(true);
+    } catch (error) {
+        console.error('Booking error:', error);
+        let errorMessage = "An error occurred while booking the appointment";
+        if (error.response) {
+            if (error.response.status === 401) {
+                errorMessage = "Please log in to make a booking";
+            } else if (error.response.status === 403) {
+                errorMessage = "You do not have permission to make this booking";
+            } else {
+                errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+            }
+        } else if (error.request) {
+            errorMessage = "Please log in to make a booking";
+        } else if (error.message) {
+            errorMessage = error.message;
         }
-    };
+        setErrorMessage(errorMessage);
+        setShowErrorAlert(true);
+    } finally {
+        setTimeout(() => {
+            setIsProcessing(false);
+        }, 3000);  
+    }
+};
 
     const handleReset = () => {
         setFormData({

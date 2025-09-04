@@ -38,8 +38,13 @@ const Rating = ({veterinarianId, onReviewSubmit}) => {
                 onReviewSubmit();
             }
         } catch (error) {
-            setErrorMessage(error.response.data.message);
-            setShowErrorAlert(true);
+            if(error.response.data.status === 401){
+                setErrorMessage("Please login to submit a review");
+                setShowErrorAlert(true);
+            }else{
+                setErrorMessage(error.response.data.message);
+                setShowErrorAlert(true);
+            }
         }
     }
 
