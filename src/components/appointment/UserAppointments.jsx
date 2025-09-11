@@ -69,10 +69,14 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
           try {
             const response = await approveAppointment(appointmentId);
             setSuccessMessage(response.message);
+            setShowErrorAlert(false);
             setShowSuccessAlert(true);
+            setIsProcessing(false);
             await fetchAppointment(appointmentId);
         } catch (error) {
             setErrorMessage(error.response.data.message);
+            setIsProcessing(false);
+            setShowSuccessAlert(false);
             setShowErrorAlert(true);
         }
     };
@@ -82,10 +86,14 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
         try {
             const response = await declineAppointment(appointmentId);
             setSuccessMessage(response.message);
+            setShowErrorAlert(false);
             setShowSuccessAlert(true);
+            setIsProcessing(false);
             await fetchAppointment(appointmentId);
         } catch (error) {
             setErrorMessage(error.response.data.message);
+            setIsProcessing(false);
+            setShowSuccessAlert(false);
             setShowErrorAlert(true);
         }
     };
@@ -135,7 +143,6 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
         setSelectedStatus("all");
         setCurrentPage(1);
     };
-
     // Calculate statuses when user or appointments change
     useEffect(() => {
         const userAppointments = appointments.filter(appointment =>{
@@ -149,7 +156,6 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
             }
             return true; // fallback
         });
-
         const uniqueStatuses = Array.from(new Set(userAppointments.map((appointment) => appointment.status)));
         setStatuses(uniqueStatuses);
     }, [appointments, user.id, user.userType]);
@@ -168,7 +174,6 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
             }
             return true; // fallback
         });
-
         // Then, filter by selected status
         let filter = userAppointments;
         if(selectedStatus && selectedStatus !== "all"){
@@ -179,13 +184,10 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
 
     const indexOfLastVet = currentPage * appointmentsPerPage;
     const indexOfFirstVet = indexOfLastVet - appointmentsPerPage;
-
     const currentAppointments = filteredAppointments.slice(indexOfFirstVet, indexOfLastVet);
 
   return (
     <Container className='p-0'>
-        {showErrorAlert && (<AlertMessage type={"danger"} message={errorMessage}/>)}
-        {showSuccessAlert && (<AlertMessage type={"success"} message={successMessage}/>)}
         <AppointmentFilter
             onClearFilters={handleClearFilter}
             statuses={statuses}
@@ -239,6 +241,8 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
                                     />
                                 )}
                             </Row>
+                            {showErrorAlert && (<AlertMessage type={"danger"} message={errorMessage}/>)}
+                            {showSuccessAlert && (<AlertMessage type={"success"} message={successMessage}/>)}
                             {user && user.userType === UserType.PATIENT &&(
                                 <Link to={`/book-appointment/${recipientId}/new-appointment`}>Book New Appointment</Link>
                             )}
@@ -262,8 +266,7 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
                                         isDisabled={!isWaitingForApproval}
                                     />
                                </div>
-                            )}
-                            
+                            )} 
                         </Accordion.Body>
                     </Accordion.Item>
                 );

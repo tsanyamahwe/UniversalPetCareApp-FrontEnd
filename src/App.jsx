@@ -12,6 +12,7 @@ import UserProfile from './components/user/UserProfile';
 import UserDashboard from './components/user/UserDashboard';
 import UserUpdate from './components/user/UserUpdate';
 import AdminDashboard from './components/admin/AdminDashboard';
+import EmailVerification from './components/auth/EmailVerification';
 
 function App() {
   const router = createBrowserRouter(createRoutesFromElements(
@@ -25,6 +26,7 @@ function App() {
         <Route path='/login' element={<Login/>}/> 
         <Route path='/user-dashboard/:userId/my-dashboard' element={<UserDashboard/>}/> 
         <Route path='/admin-dashboard' element={<AdminDashboard/>}/> 
+        <Route path='/email-verification' element={<EmailVerification/>}/> 
      </Route>
   ))
   return (

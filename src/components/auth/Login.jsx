@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Container, Row, Col, Card, Form, InputGroup, Button} from 'react-bootstrap';
 import {BsLockFill, BsPersonFill} from 'react-icons/bs';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import UseMessageAlerts from '../hooks/UseMessageAlerts';
+import { loginUser } from './AuthService';
+import AlertMessage from '../common/AlertMessage';
 
 const Login = () => {
     const[credentials, setCredentials] = useState({
         email: "",
         password: "",
     });
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
     
+    const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
+
     const handleInputChange = (e) => {
         const{name, value} = e.target;
         setCredentials((previousState) => ({
@@ -16,14 +24,45 @@ const Login = () => {
         }));
     };
 
-  return (
-    <Container className="mt-5">
-        <Row className="justify-content-center">
-             <Col sm={4}>
-                  <Card>
-                       <Card.Body>
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("authToken");
+        if(isAuthenticated){
+            navigate(from, {replace : true});
+        }
+    });
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        if(!credentials.email || !credentials.password){
+            setErrorMessage("Please enter a valid username and password.");
+            setShowErrorAlert(true);
+            return;
+        }
+        try {
+            const data = await loginUser(credentials.email, credentials.password);
+            localStorage.setItem("authToken", data.token);
+            clearLoginForm();
+            navigate(from, {replace : true});
+        } catch (error) {
+            setErrorMessage(error.response.data.data);
+            setShowErrorAlert(true);
+        }
+    };
+
+    const clearLoginForm = () => {
+        setCredentials({email: " ", password: " "});
+        setShowErrorAlert(false);
+    };
+
+    return (
+        <Container className="mt-5">
+            <Row className="justify-content-center">
+                <Col sm={4}>
+                    <Card>
+                        {showErrorAlert && <AlertMessage type={"danger"} message={errorMessage}/>}
+                        <Card.Body>
                             <Card.Title className="text-center mb-4">Login</Card.Title>
-                            <Form>
+                            <Form onSubmit={handleLogin}>
                                 <Form.Group className='mb-3' controlId='username'>
                                     <Form.Label>Username(email)</Form.Label>
                                     <InputGroup>
@@ -65,12 +104,12 @@ const Login = () => {
                                     Register here
                                 </Link>{""}
                             </div>
-                       </Card.Body>                    
-                  </Card>
-             </Col>
-        </Row>      
-    </Container>
-  )
+                        </Card.Body>                    
+                    </Card>
+                </Col>
+            </Row>      
+        </Container>
+    );
 };
 
 export default Login;

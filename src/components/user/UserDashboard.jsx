@@ -88,8 +88,6 @@ const UserDashboard = () => {
 
   return (
     <Container className='mt-2 user-dashboard' >
-        {showErrorAlert && (<AlertMessage type={"danger"} message={errorMessage}/>)}
-        {showSuccessAlert && (<AlertMessage type={"success"} message={successMessage}/>)}
             <Tabs className='mb-1' justify activeKey={activeKey} onSelect={handleTabSelect}>
                 <Tab eventKey='profile' title={<h5>Profile</h5>}>
                     {user && (
