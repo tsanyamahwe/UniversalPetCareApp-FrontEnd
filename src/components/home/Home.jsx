@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import vetcat from "../../assets/images/vetcat.jpg";
 import vetdogcat from "../../assets/images/vetdogcat.jpg";
-import {Button, Card, Col, Container, ListGroup, Row} from "react-bootstrap"
+import {Button, Card, Col, Container, ListGroup, Row} from "react-bootstrap";
+import { getVeterinarians } from "../veterinarian/VeterinarianService";
+import VetsSlider from "../veterinarian/VetsSlider";
+import NoDataAvailable from "../hooks/NoDataAvailable";
 
 const Home = () => {
+    const[vets, setVets] = useState([]);
+    const[errorMessage, setErrorMessage] = useState("");
+
+    useEffect(() =>{
+        getVeterinarians()
+        .then((response) => {
+            setVets(response.data);
+        })
+        .catch((error) => {
+            setErrorMessage(error.message || "Something went wrong")
+        });
+    }, []);
+
   return (
     <Container className="home-container mt-5">
         <Row>
@@ -51,16 +67,19 @@ const Home = () => {
             </Col>
         </Row>
         <div className="card mb-5">
-            <h4>
+            <center><h4>
                 What people are saying about {""}
-                <span className="text-info">Universal Pet Care</span> Veterinarians
-            </h4>
+                <span className="text-info"><u>Universal Pet Care</u></span> Veterinarians
+            </h4></center>
             <hr/>
-            <p className="text-center">Here, we are going to be sliding veterinarians across</p>
+            {vets && vets.length > 0 ? (
+                <VetsSlider vets={vets}/>
+            ):(
+                <NoDataAvailable dataType='veterinarians data' errorMessage={errorMessage}/>
+            )}
         </div>
-     
     </Container>
   );
-}
+};
 
-export default Home
+export default Home;

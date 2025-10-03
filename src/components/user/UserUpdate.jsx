@@ -79,12 +79,6 @@ const UserUpdate = () => {
             <Form onSubmit={handleUpdateSubmit}>
                 <Card className='shadow mb-5'>
                     <Card.Header className='text-center mb-1'>Update User Information</Card.Header>
-                    {showSuccessAlert && (
-                        <AlertMessage type='success' message={successMessage}/>
-                    )}
-                    {showErrorAlert && (
-                        <AlertMessage type='danger' message={errorMessage}/>
-                    )}
                     <Card.Body>
                         <fieldset className='field-set'>
                             <legend><h5>Full Name</h5></legend>
@@ -153,6 +147,8 @@ const UserUpdate = () => {
                                 />
                             </Form.Group>
                         )}  
+                        {showSuccessAlert && (<AlertMessage type='success' message={successMessage}/>)}
+                        {showErrorAlert && (<AlertMessage type='danger' message={errorMessage}/>)}
                         <div className='d-flex justify-content-center'>
                             <div className='mx-2'>
                             <Button

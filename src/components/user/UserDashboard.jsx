@@ -10,17 +10,23 @@ import UserAppointments from '../appointment/UserAppointments';
 import { formatAppointmentStatus, UserType } from '../utils/Utilities';
 import CustomPieChart from '../charts/CustomPieChart';
 import NoDataAvailable from '../common/NoDataAvailable';
+import { useParams } from 'react-router-dom';
+import { logoutUser } from '../auth/AuthService';
 
 const UserDashboard = () => {
     const[user, setUser] = useState(null);
     const[appointments, setAppointments] = useState([]);
     const[appointmentData, setAppointmentData] = useState();
-    const userId = 91;
+    
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
     const[activeKey, setActiveKey] = useState(() => {
         const storedActiveKey = localStorage.getItem("activeKey");
         return storedActiveKey ? storedActiveKey : "profile";
     });
+
+    const {userId} = useParams();
+    const currentUserId = localStorage.getItem("userId");
+    const isCurrentUser = userId === currentUserId;
 
     useEffect(() => {
         const getUser = async () => {
@@ -55,7 +61,6 @@ const UserDashboard = () => {
             const transformedData = Object.values(statusCounts);
             setAppointmentData(transformedData);
             setAppointments(user.appointments);
-            console.log("Here is the transform data: ", transformedData);
         }
     }, [user]);
 
@@ -75,7 +80,11 @@ const UserDashboard = () => {
             const response = await deleteUserAccount(userId);
             setSuccessMessage(response.message);
             setShowSuccessAlert(true);
+            setTimeout(()=> {
+                logoutUser();
+            },5000);
         } catch (error) {
+            console.error("Delete account error: ", error);
             setErrorMessage(error.response.data.message);
             setShowErrorAlert(true);
         }
@@ -90,6 +99,8 @@ const UserDashboard = () => {
     <Container className='mt-2 user-dashboard' >
             <Tabs className='mb-1' justify activeKey={activeKey} onSelect={handleTabSelect}>
                 <Tab eventKey='profile' title={<h5>Profile</h5>}>
+                    {showErrorAlert && <AlertMessage type={"danger"} message={errorMessage}/>}
+                    {showErrorAlert && <AlertMessage type={"success"} message={successMessage}/>}
                     {user && (
                         <UserProfile
                             user={user}
@@ -110,21 +121,23 @@ const UserDashboard = () => {
                         </Col>
                     </Row>
                 </Tab>
-                <Tab eventKey='appointments' title={<h5>Appointment Details</h5>}>
-                    <Row>
-                        <Col>
-                            {user && (
-                            <React.Fragment>
-                                {appointments && appointments.length > 0 ? (
-                                    <UserAppointments user={user} appointments={appointments}/>
-                                ):(
-                                    <NoDataAvailable dataType={"Appointment Data"}/>
+                {isCurrentUser && (
+                    <Tab eventKey='appointments' title={<h5>Appointment Details</h5>}>
+                        <Row>
+                            <Col>
+                                {user && (
+                                <React.Fragment>
+                                    {appointments && appointments.length > 0 ? (
+                                        <UserAppointments user={user} appointments={appointments}/>
+                                    ):(
+                                        <NoDataAvailable dataType={"Appointment Data"}/>
+                                    )}
+                                </React.Fragment>
                                 )}
-                            </React.Fragment>
-                            )}
-                        </Col>
-                    </Row>
-                </Tab>
+                            </Col>
+                        </Row>
+                    </Tab>
+                )}
                 <Tab eventKey='reviews' title={<h5>Reviews</h5>}>
                     <Container  className='d-flex justify-content-center align-items-center'>
                         <Card className='mt-1 mb-1 review-card'>

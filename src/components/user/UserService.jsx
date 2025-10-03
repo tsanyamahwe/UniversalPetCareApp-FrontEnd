@@ -7,7 +7,7 @@ export async function getUserById(userId) {
     } catch (error) {
         throw error;
     }
-}
+};
 
 export async function userRegistration(user) {
     try {
@@ -16,17 +16,24 @@ export async function userRegistration(user) {
     } catch (error) {
         throw error;
     }
-}
+};
 
 export async function changeUserPassword(userId, currentPassword, newPassword, confirmNewPassword) {
     try {
-        const requestData = {currentPassword, newPassword, confirmNewPassword};
-        const response = await api.put(`/users/user/${userId}/change-password`, requestData);
+        //const requestData = {currentPassword, newPassword, confirmNewPassword};
+        const response = await api.put(`/users/user/${userId}/change-password`, {
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+            confirmNewPassword: confirmNewPassword
+        });
         return response.data;
     } catch (error) {
+        if(error.response && error.response.data){
+            throw error;
+        }
         throw error;
     }
-}
+};
 
 export async function updateUser(userData, userId) {
     try {
@@ -35,7 +42,7 @@ export async function updateUser(userData, userId) {
     } catch (error) {
         throw error;
     }    
-}
+};
 
 export async function deleteUserAccount(userId) {
     try {
@@ -44,7 +51,7 @@ export async function deleteUserAccount(userId) {
     } catch (error) {
         throw error;
     }
-}
+};
 
 export async function countVeterinarians(){
     try {
@@ -53,7 +60,7 @@ export async function countVeterinarians(){
     } catch (error) {
         throw error;
     }
-}
+};
 
 export async function countPatients(){
     try {
@@ -62,7 +69,7 @@ export async function countPatients(){
     } catch (error) {
         throw error;
     }
-}
+};
 
 export async function countUsers(){
     try {
@@ -71,7 +78,7 @@ export async function countUsers(){
     } catch (error) {
         throw error;
     }
-}
+};
 
 export const getAggregateUsersByMonthAndType = async () => {
     try {
@@ -80,7 +87,7 @@ export const getAggregateUsersByMonthAndType = async () => {
     } catch (error) {
         throw error;
     }
-}
+};
 
 export const getAggregatedUsersAccountsByActiveStatus = async () => {
     try {
@@ -89,7 +96,7 @@ export const getAggregatedUsersAccountsByActiveStatus = async () => {
     } catch (error) {
         throw error;
     }
-}
+};
 
 export const aggregateVeterinariansBySpecialization = async () => {
     try {
@@ -98,7 +105,7 @@ export const aggregateVeterinariansBySpecialization = async () => {
     } catch (error) {
         throw error;
     }
-}
+};
 
 export async function lockUserAccount(userId){
     try {
@@ -107,7 +114,7 @@ export async function lockUserAccount(userId){
     } catch (error) {
         throw error;
     }
-}
+};
 
 export async function unLockUserAccount(userId){
     try {
@@ -116,4 +123,4 @@ export async function unLockUserAccount(userId){
     } catch (error) {
         throw error;
     }
-}
+};

@@ -13,6 +13,9 @@ const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
     const[showDeleteModal, setShowDeleteModal] = useState(false);
     const[userToDelete, setUserToDelete] = useState(null);
 
+    const currentUserId = localStorage.getItem("userId");
+    const isCurrentUser = String(user.id) == currentUserId;
+
     const handleShowPhotoUploaderModal = () => { setShowPhotoUploaderModal(true); };
     const handleClosePhotoUploaderModal = () => { setShowPhotoUploaderModal(false); };
     const handleShowChangePasswordModal = () => { setShowChangePasswordModal(true); };
@@ -35,7 +38,7 @@ const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
             console.error(error.message);
         }
     };
-
+   
   return (
     <Container className='shadow'>
         <DeleteConfirmationModal
@@ -44,14 +47,16 @@ const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
             onConfirm={handleDeleteAndCloseModal}
             itemToDelete={"user account"}
         />
-        <React.Fragment>   
+        <React.Fragment> 
             <Row>
                 <Col md={3}>
                     <Card className='text-center mb-3 shadow'>
                         <Card.Body>
                             <UserImage userId={user.id} userPhoto={user.photo}/>
                         </Card.Body>
-                        <div className='text-center'> 
+                        {/* 🚫 Conditionally render the buttons based on isCuurentUser == Admin logged in */}
+                        {isCurrentUser && (
+                            <div className='text-center'> 
                                 <Link to={"#"} onClick={handleShowPhotoUploaderModal}>Update Photo</Link> 
                                 <PhotoUploaderModal 
                                     userId={user.id} 
@@ -63,9 +68,27 @@ const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
                                     userId={user.id} 
                                     show={showChangePasswordModal} 
                                     handleClose={handleCloseChangePasswordModal}/>
-                        </div>
+                            </div>
+                        )}
                     </Card>
-                </Col>   
+                    {/* 🚫 Conditionally render the buttons based on isCuurentUser == Admin logged in */}
+                    {isCurrentUser && (
+                        <Card.Body>
+                            <div className='d-flex justify-content-center mb-4'>
+                                <div className='mx-2'>
+                                    <Link to={`/update-user/${user.id}/update`} className='btn btn-warning btn-sm'>
+                                        Edit Profile
+                                    </Link>
+                                </div>
+                                <div className='mx-2'>
+                                    <Button variant='danger' size='sm' onClick={handleShowDeleteModal}>
+                                        Close account
+                                    </Button>
+                                </div>
+                            </div>
+                        </Card.Body>
+                    )}
+                </Col>  
                 <Col md={9}>
                     <Card className='mb-3 shadow'>
                         <Card.Body className='d-flex align-items-center'>
@@ -121,7 +144,7 @@ const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
                             </Col>
                         </Card.Body>
                     </Card>
-                    <Card className='mb-3 shadow'>
+                    <Card className='mb3 shadow'>
                         <Card.Body className='d-flex align-items-center'>
                             <Col md={2}>Role(s):</Col>
                             <Col md={4}>
@@ -135,25 +158,11 @@ const UserProfile = ({user, handlePhotoRemoval, handleDeleteAccount}) => {
                             </Col>
                         </Card.Body>
                     </Card>
-                    <Card.Body>
-                        <div className='d-flex justify-content-center mb-4'>
-                            <div className='mx-2'>
-                                <Link to={`/update-user/${user.id}/update`} className='btn btn-warning btn-sm'>
-                                    Edit Profile
-                                </Link>
-                            </div>
-                            <div className='mx-2'>
-                                <Button variant='danger' size='sm' onClick={handleShowDeleteModal}>
-                                    Close account
-                                </Button>
-                            </div>
-                        </div>
-                    </Card.Body>
                 </Col>
             </Row>
         </React.Fragment>
     </Container>
-  )
-}
+  );
+};
 
 export default UserProfile;

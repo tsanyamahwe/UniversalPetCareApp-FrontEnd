@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { verifyEmail } from './AuthService';
+import { verifyEmail, resendVerificationToken } from './AuthService';
 import ProcessSpinner from '../common/ProcessSpinner';
+import { Button } from 'react-bootstrap';
 
 const EmailVerification = () => {
     const[verificationMessage, setVerificationMessage] = useState("verifying your email...");
@@ -26,7 +27,7 @@ const EmailVerification = () => {
                 case "VALID": setVerificationMessage("Your email has been successfully verified, you can proceed to login.");
                 setAlertType("alert-success");
                 break;
-                case "VERIFIED": setVerificationMessage("This email has already been verified, please proceed to login.");
+                case "VERIFIED": setVerificationMessage("The email has been successfully verified, please proceed to login.");
                 setAlertType("alert-info");
                 break;
                 default: setVerificationMessage("An unexpected error occured.");
@@ -51,6 +52,31 @@ const EmailVerification = () => {
         }
     };
 
+    const handleResendToken = async () => {
+        setIsProcessing(true);
+        const queryParams = new URLSearchParams(location.search);
+        const oldToken =queryParams.get("token");
+        try {
+            if(!oldToken){
+                return;
+            }
+            const response = await resendVerificationToken(oldToken);
+            setVerificationMessage(response.message);
+            setAlertType("alert-success");
+        } catch (error) {
+            let message = "Failed to resend verification token";
+            if(error.response && error.response.data && error.response.data.message){
+                message = error.response.data.message;
+            }else if(error.message){
+                message = error.message;
+            }
+            setVerificationMessage(message);
+            setAlertType("alert-danger");
+        }finally{
+            setIsProcessing(false); //stop loading regardless of the outcome
+        }
+    };
+
     return (
         <div className='d-flex justify-content-center mt-lg-5'>
             {isProcessing ? (
@@ -59,6 +85,11 @@ const EmailVerification = () => {
                 <div className='col-12 col-md-6'>
                     <div className={`alert ${alertType}`} role='alert'>
                         {verificationMessage}
+                        {alertType === "alert-warning" && (
+                            <Button onClick={handleResendToken} className='btn btn-link'>
+                                Resend Verification Link
+                            </Button>
+                        )}
                     </div>
                 </div>
             )}

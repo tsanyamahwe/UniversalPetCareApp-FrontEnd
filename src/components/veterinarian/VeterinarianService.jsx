@@ -27,3 +27,14 @@ export async function getVetSpecializations() {
         throw error;
     }
 };
+
+export async function editSpecialization(vetId, newSpecialization) {
+    try {
+        const result = await api.put(`/veterinarians/${vetId}/specialization`, {newSpecialization});
+        return result.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+

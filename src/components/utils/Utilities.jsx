@@ -66,3 +66,64 @@ export const generateColor = (str) => {
     const hue = hash % 360;
     return `hsl(${hue}, 70%, 50%)`;
 };
+
+// utils/passwordValidator.js
+export const validatePassword = (password) => {
+    const errors = [];
+    const requirements = {
+        minLength: false,
+        hasUppercase: false,
+        hasLowercase: false,
+        hasNumber: false,
+        hasSpecialChar: false
+    };
+
+    if (!password || password.length === 0) {
+        return {
+            isValid: false,
+            errors: ["Password cannot be empty"],
+            requirements
+        };
+    }
+
+    // Check minimum length
+    if (password.length >= 8) {
+        requirements.minLength = true;
+    } else {
+        errors.push("Password must be at least 8 characters long");
+    }
+
+    // Check for uppercase letter
+    if (/[A-Z]/.test(password)) {
+        requirements.hasUppercase = true;
+    } else {
+        errors.push("Password must contain at least one uppercase letter (A-Z)");
+    }
+
+    // Check for lowercase letter
+    if (/[a-z]/.test(password)) {
+        requirements.hasLowercase = true;
+    } else {
+        errors.push("Password must contain at least one lowercase letter (a-z)");
+    }
+
+    // Check for number
+    if (/\d/.test(password)) {
+        requirements.hasNumber = true;
+    } else {
+        errors.push("Password must contain at least one number (0-9)");
+    }
+
+    // Check for special character
+    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)) {
+        requirements.hasSpecialChar = true;
+    } else {
+        errors.push("Password must contain at least one special character");
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors,
+        requirements
+    };
+};

@@ -3,12 +3,13 @@ import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
 import { Button, Col, Form, OverlayTrigger, Row, Table, Tooltip } from 'react-bootstrap';
 import AlertMessage from '../common/AlertMessage';
-import {Link} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import { BsCheckLg, BsEyeFill, BsLockFill, BsPencilFill, BsPlusSquareFill, BsTrashFill, BsUnlockFill, BsXLg } from 'react-icons/bs';
 import { deleteUserAccount, lockUserAccount, unLockUserAccount, updateUser } from "../user/UserService";
-import { getVeterinarians } from "../veterinarian/VeterinarianService";
+import { getVeterinarians, editSpecialization} from "../veterinarian/VeterinarianService";
 import Paginator from '../common/Paginator';
 import UserFilter from '../user/UserFilter';
+import AddSpecializationModal from '../modals/AddSpecializationModal';
 
 const VeterinarianComponent = () => {
     const[veterinarians, setVeterinarians] = useState([]);
@@ -22,6 +23,10 @@ const VeterinarianComponent = () => {
     const[isUpdating, setIsUpdating] = useState(false);
     const[currentPage, setCurrentPage] = useState(1);
     const[vetsPerPage, setVetsPerPage] = useState(10);
+    const[showAddSpecializationModal, setShowAddSpecializationModal] = useState(false);
+    const[vetIdToAddSpecialization, setVetIdToAddSpecialization] = useState(null);
+
+    //const {userId} = useParams();
 
     const indexOfLastVet = currentPage * vetsPerPage;
     const indexOfFirstVet = indexOfLastVet - vetsPerPage;
@@ -169,13 +174,22 @@ const VeterinarianComponent = () => {
                     <Form.Control
                         as="select"
                         value={editedVet.specialization || ''}
-                        onChange={(e) => handleInputChange('specialization', e.target.value)}
+                        onChange={(e) =>{
+                            const selectedValue = e.target.value;
+                            if(selectedValue === "addNewSpecialization"){
+                                setVetIdToAddSpecialization(vet.id);
+                                setShowAddSpecializationModal(true);
+                            }else{
+                                handleInputChange('specialization', selectedValue)
+                            }
+                        }}
                         size="sm"
                     >
                         <option value="">Select Specialization</option>
                         {specializations.map((spec, idx) => (
                             <option key={idx} value={spec}>{spec}</option>
                         ))}
+                        <option value={"addNewSpecialization"}>Add New</option>
                     </Form.Control>
                 );
             } else {
@@ -197,6 +211,23 @@ const VeterinarianComponent = () => {
         return vet[field];
     };
 
+    const handleAddSpecialization = async (editVetId, newSpecialization) => {
+        try {
+            await editSpecialization(editVetId, newSpecialization);
+            const updatedVets = veterinarians.map(vet => vet.id === editVetId ? {...vet, specialization: newSpecialization} : vet);
+            setVeterinarians(updatedVets);
+            setSpecializations([...new Set(updatedVets.map(vet => vet.specialization))]);
+            setSuccessMessage('New specialization added successfully');
+            setShowSuccessAlert(true);
+            setEditedVet(previous => ({...previous, specialization: newSpecialization }));
+        } catch (error) {
+            setErrorMessage(error.message || 'Failed o add specialization');
+            setShowErrorAlert(true);
+        }finally{
+            setShowAddSpecializationModal(false);
+        }
+    };
+
     return (
     <main>
         <DeleteConfirmationModal
@@ -205,21 +236,22 @@ const VeterinarianComponent = () => {
             onConfirm={handleDeleteAccount}
             itemToDelete='veterinarian'
         />
+        <AddSpecializationModal
+            show={showAddSpecializationModal}
+            onHide={() => {
+                setShowAddSpecializationModal(false);
+                setVetIdToAddSpecialization(null);
+            }}
+            onConfirm={handleAddSpecialization}
+            vetId={vetIdToAddSpecialization}
+            existingSpecializations={specializations}
+        />
         <h3>List of Veterinarians</h3>
         <Row>
             <Col>
                 {showErrorAlert && (<AlertMessage type='danger' message={errorMessage}/>)}
                 {showSuccessAlert && (<AlertMessage type='success' message={successMessage}/>)}
             </Col>
-            {/* <Col>
-                {" "}
-                <div className='d-flex justify-content-end'>
-                    <Link to={"/user-registration"}>
-                        {" "}
-                        <BsPlusSquareFill/>
-                    </Link>
-                </div>
-            </Col> */}
         </Row>
         <Row>
             <Col md={6}>
@@ -261,7 +293,7 @@ const VeterinarianComponent = () => {
                                 overlay={
                                     <Tooltip id={`tooltip-view-${index}`}>View Vet Information</Tooltip>
                                 }>
-                                <Link to={`/doctors/veterinarian/${vet.id}/veterinarian`} className='text-info'>
+                                <Link to={`/user-dashboard/${vet.id}/my-dashboard`} className='text-info'>
                                     <BsEyeFill/>
                                 </Link>
                             </OverlayTrigger>

@@ -6,6 +6,9 @@ import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import { Link } from 'react-router-dom';
 import VetSpecializationSelector from '../veterinarian/VetSpecializationSelector';
 import { userRegistration } from './UserService';
+import { isValid } from 'date-fns';
+import { validatePassword } from '../utils/Utilities';
+import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
 
 const UserRegistration = () => {
     const[user, setUser] = useState({
@@ -18,7 +21,13 @@ const UserRegistration = () => {
         userType: "",
         specialization: "",
     });
+    const[passwordValidation, setPasswordValidation] = useState({
+        isValid: false,
+        errors: [],
+        requirements: {}
+    });
 
+    const[showPasswordStrength, setShowPasswordStrength] = useState(false);
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
     const[isProcessing, setIsProcessing] = useState(false);
 
@@ -27,10 +36,24 @@ const UserRegistration = () => {
         setUser((previousState) => ({
             ...previousState, [name]: value,
         }));
+        //validate password in real-time
+        if(name === 'password'){
+            const validation = validatePassword(value);
+            setPasswordValidation(validation);
+            setShowPasswordStrength(value.length > 0);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        //validate password before submission
+        const passwordCheck = validatePassword(user.password);
+        if(!passwordCheck.isValid){
+            setErrorMessage(`Password validation failed: ${passwordCheck.errors.join('; ')}`);
+            setShowErrorAlert(true);
+            return;
+        }
         
         // Validate that veterinarians have selected a specialization
         if (user.userType === "VET" && !user.specialization) {
@@ -47,7 +70,18 @@ const UserRegistration = () => {
             setIsProcessing(false);
             handleReset();
         } catch (error) {
-            setErrorMessage(error.response?.data?.message || "Registration failed. Please try again.");
+            console.error('Registration error:', error);
+            let errorMsg = "Registration failed. Please try again.";
+            if(error.response?.data){
+                if(typeof error.response.data === 'string'){
+                    errorMsg = error.response.data;
+                }else if(error.response.data.message){
+                    errorMsg = error.response.data.message;
+                }else if(error.response.data.errors){
+                    errorMsg = error.response.data.errors.join('; ')
+                }
+            }
+            setErrorMessage(errorMsg);
             setShowErrorAlert(true);
         } finally {
             setIsProcessing(false);
@@ -165,9 +199,15 @@ const UserRegistration = () => {
                                        type='password'
                                        name='password'
                                        required
-                                       placeholder='set your password'
+                                       placeholder='create your password'
                                        value={user.password}
                                        onChange={handleInputChange}
+                                       className={showPasswordStrength ? (passwordValidation.isValid ? 'is-valid' : 'is-invalid') : ''}
+                                    />
+                                    {/*Password Strength Indicator*/}
+                                    <PasswordStrengthIndicator 
+                                        password={user.password}
+                                        showRequirements={showPasswordStrength}
                                     />
                                 </Col>
                             </Form.Group>
@@ -209,7 +249,7 @@ const UserRegistration = () => {
                                     variant='outline-primary'
                                     size='sm'
                                     className='me-2'
-                                    disabled={isProcessing}>
+                                    disabled={isProcessing || (showPasswordStrength && !passwordValidation.isValid)}>
                                     {isProcessing? (
                                         <ProcessSpinner message='Processing registration...'/>
                                     ):(
@@ -220,7 +260,7 @@ const UserRegistration = () => {
                                     variant='outline-info'
                                     size='sm'
                                     onClick={handleReset}
-                                    disabled={isProcessing}>
+                                    disabled={isProcessing || (showPasswordStrength && !passwordValidation.isValid)}>
                                     Reset
                                 </Button>
                             </div>

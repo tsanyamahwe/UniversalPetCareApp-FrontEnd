@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getAggregatedUsersAccountsByActiveStatus } from '../user/UserService';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import NoDataAvailable from '../hooks/NoDataAvailable';
 
 const AccountChart = () => {
     const[accountData, setAccountData] = useState([]);
@@ -46,25 +47,33 @@ const AccountChart = () => {
     }, []);
 
   return (
-    <div>
-        <h5 className='mt-4 chart-title' style={{ margin: '0 0 10px 0' }}>Account Activity</h5>
-        <ResponsiveContainer width={"80%"} height={415}>
-            <PieChart>
-                <Pie
-                    data={accountData}
-                    dataKey='value'
-                    nameKey='name'
-                    outerRadius={120}
-                    fill='#8884d8'
-                    label>
-                    {accountData.map((entry, index) =>(
-                        <Cell key={`cell-${index}`} fill={entry.color}/>
-                    ))}
-                </Pie>
-                <Tooltip/>
-            </PieChart>
-        </ResponsiveContainer>
-    </div>
+    <section>
+        {accountData && accountData.length > 0 ? (
+            <React.Fragment>
+                <div>
+                <h5 className='mt-4 chart-title' style={{ margin: '0 0 10px 0' }}>Account Activity</h5>
+                    <ResponsiveContainer width={"80%"} height={415}>
+                        <PieChart>
+                            <Pie
+                                data={accountData}
+                                dataKey='value'
+                                nameKey='name'
+                                outerRadius={120}
+                                fill='#8884d8'
+                                label>
+                                {accountData.map((entry, index) =>(
+                                    <Cell key={`cell-${index}`} fill={entry.color}/>
+                                ))}
+                            </Pie>
+                            <Tooltip/>
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+            </React.Fragment>
+        ):(
+            <NoDataAvailable dataType = {"account data"} message={errorMessage}/>
+        )}
+    </section>
   );
 };
 

@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import { loginUser } from './AuthService';
 import AlertMessage from '../common/AlertMessage';
+import {jwtDecode} from 'jwt-decode';
 
 const Login = () => {
     const[credentials, setCredentials] = useState({
@@ -41,6 +42,9 @@ const Login = () => {
         try {
             const data = await loginUser(credentials.email, credentials.password);
             localStorage.setItem("authToken", data.token);
+            const decoded = jwtDecode(data.token);
+            localStorage.setItem("userRoles", JSON.stringify(decoded.roles));
+            localStorage.setItem("userId", decoded.id);
             clearLoginForm();
             navigate(from, {replace : true});
         } catch (error) {
@@ -103,6 +107,13 @@ const Login = () => {
                                 <Link to={"/register-user"} style={{textDecoration: "none"}}>
                                     Register here
                                 </Link>{""}
+                            </div>
+                            <div className='mt-2 justify-content-center' >
+                                <Link
+                                    to={"/password-reset-request"}
+                                    style={{textDecoration: "none"}}>
+                                    Forgot Password?
+                                </Link>
                             </div>
                         </Card.Body>                    
                     </Card>

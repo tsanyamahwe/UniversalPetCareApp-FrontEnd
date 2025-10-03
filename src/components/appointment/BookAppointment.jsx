@@ -31,7 +31,7 @@ const BookAppointment = () => {
     const{successMessage, setSuccessMessage, showSuccessAlert, setShowSuccessAlert, errorMessage, setErrorMessage, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const{recipientId} = useParams();
-    const senderId = 92;
+    const senderId = localStorage.getItem("userId");
 
     const handleDateChange = (date) => {
         setFormData((previousState) => ({

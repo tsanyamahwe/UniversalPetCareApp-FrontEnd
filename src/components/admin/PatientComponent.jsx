@@ -100,7 +100,7 @@ const PatientComponent = () => {
                                 overlay={
                                     <Tooltip id={`tooltip-view-${index}`}>View Patient Details</Tooltip>
                                 }>
-                                <Link to={`user-dashboard/${patient.id}/my-dashboard`} className='text-info'>
+                                <Link to={`/user-dashboard/${patient.id}/my-dashboard`} className='text-info'>
                                     <BsEyeFill/>
                                 </Link>
                             </OverlayTrigger>

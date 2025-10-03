@@ -10,6 +10,7 @@ import Rating from '../rating/Rating';
 import { getUserById } from '../user/UserService';
 import AlertMessage from '../common/AlertMessage';
 import Paginator from '../common/Paginator';
+import LoadSpinner from '../common/LoadSpinner';
 
 const Veterinarian = () => {
     const[veterinarian, setVeterinarian] = useState(null);
@@ -25,7 +26,9 @@ const Veterinarian = () => {
         try {
             const result = await getUserById(vetId);
             setVeterinarian(result.data);
-            setIsLoading(false);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 1000);
         } catch (error) {
             setErrorMessage(error.result.data.message);
             setShowErrorAlert(true);
@@ -38,7 +41,11 @@ const Veterinarian = () => {
     }, [vetId]);
 
     if(isLoading){
-        return <h4>Loading...</h4>;
+        return(
+            <div>
+                <LoadSpinner/>
+            </div>
+        );
     };
 
     if (showErrorAlert) {
@@ -60,7 +67,7 @@ const Veterinarian = () => {
             </Container>
         );
     };
-
+    
     const indexOfLastReview = currentPage * reviewPerPage; 
     const indexOfFirstReview = indexOfLastReview - reviewPerPage;
     const currentReviews = veterinarian.reviews.slice(indexOfFirstReview, indexOfLastReview) || [];
@@ -126,13 +133,12 @@ const Veterinarian = () => {
                         paginate={setCurrentPage}
                         currentPage={currentPage}
                     >
-
                     </Paginator>
                 </Card.Body>
             </Card>
         )}
     </Container>
-  )
-}
+  );
+};
 
 export default Veterinarian;

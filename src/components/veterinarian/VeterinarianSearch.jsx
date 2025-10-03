@@ -5,30 +5,28 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import AlertMessage from '../common/AlertMessage';
-import { findAvailableVeterinarians, getVetSpecializations } from './VeterinarianService';
+import { findAvailableVeterinarians, getVeterinarians, getVetSpecializations } from './VeterinarianService';
 import { dateTimeFormatter } from '../utils/Utilities';
 
 const VeterinarianSearch = ({onSearchResult = () => {}}) => {
+    const[specializations, setSpecializations] = useState([]);
+    const[showDateTime, setShowDateTime] = useState(false);
     const[searchQuery, setSearchQuery] = useState({
         date: null, 
         time: null, 
         specialization: ""
     });
 
-    // Add separate state for specializations array
-    const[specializations, setSpecializations] = useState([]);
-    const[showDateTime, setShowDateTime] = useState(false);
-
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
-    // Function to fetch specializations from database
+     useEffect(() => {
+        fetchSpecializations();
+        fetchAllVeterinarians();
+    }, []);
+
     const fetchSpecializations = async () => {
         try {
-            console.log('🔍 About to call getVetSpecializations()');
             const response = await getVetSpecializations(); 
-            console.log('🔍 Full API Response:', response);
-            console.log('🔍 Response type:', typeof response);
-            console.log('🔍 Is response an array?', Array.isArray(response));
             if(response && response.message){
                 setSuccessMessage(response.message);
             }
@@ -40,15 +38,13 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
                 setSpecializations(response.specializations);
             }
         } catch (error) {
-            console.error('Error fetching specializations:', error);
-            // Fallback to default options if API fails
             setSpecializations(['Surgeon', 'Urologist', 'Other']);
         }
     };
 
     const fetchAllVeterinarians = async () => {
         try {
-            const response = await findAvailableVeterinarians({all: true});
+            const response = await getVeterinarians();
             onSearchResult(response.data);
             setShowErrorAlert(false);
         } catch (error) {
@@ -58,23 +54,12 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
         }
     };
 
-    // Fetch specializations when component mounts
-    useEffect(() => {
-        fetchSpecializations();
-        fetchAllVeterinarians();
-    }, []);
-
     const handleInputChange = (e) => {
         const{name, value} = e.target;
-        
-        // Update the search query
         const updatedQuery = {...searchQuery, [name]: value};
         setSearchQuery(updatedQuery);
-        
-        // If specialization is cleared (empty string), fetch all veterinarians
         if (name === 'specialization') {
             if (value === '') {
-                // Reset to show all veterinarians when "Select Specialization" is chosen
                 fetchAllVeterinarians();
                 refreshSpecializations();
             }
@@ -104,6 +89,17 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
     const handleSearch = async (e) => {
         e.preventDefault();
         
+        if(!searchQuery.specialization && !searchQuery.date && !searchQuery.time){
+            await fetchAllVeterinarians();
+            return;
+        }
+
+        if(!searchQuery.specialization){
+            setErrorMessage('Specialization is a required field.');
+            setShowErrorAlert(true);
+            return;
+        }
+        
         const{date, time} = searchQuery;
         const{formattedDate, formattedTime} = dateTimeFormatter(date, time);
 
@@ -120,7 +116,6 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
             onSearchResult(response.data)
             setShowErrorAlert(false)
         } catch (error) {
-            console.log("logging the error from the controller", error);
             setErrorMessage(error.response.data.message)       
             setShowErrorAlert(true)     
         }
@@ -132,7 +127,6 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
         fetchAllVeterinarians();
     };
 
-    // Function to refresh specializations (call this after adding new veterinarian)
     const refreshSpecializations = () => {
         fetchSpecializations();
     };
@@ -163,7 +157,7 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
                         </Form.Group>
                         {showDateTime && (
                             <React.Fragment>
-                                <legend>Include Date and Time</legend>
+                                <legend><h5>Date and Time</h5></legend>
                                 <Form.Group className='mb-3'>
                                     <Form.Label className='searchText'>Date</Form.Label>
                                     <DatePicker
