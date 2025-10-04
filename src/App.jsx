@@ -16,6 +16,7 @@ import EmailVerification from './components/auth/EmailVerification';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import PasswordResetRequest from './components/auth/PasswordResetRequest';
 import ResetPassword from './components/auth/ResetPassword';
+import { AuthProvider } from './components/auth/AuthContext';
 
 function App() {
   const router = createBrowserRouter(createRoutesFromElements(
@@ -48,9 +49,11 @@ function App() {
      </Route>
   ))
   return (
-    <main className="">
-      <RouterProvider router={router}/>      
-    </main>
+    <AuthProvider>
+      <main className="">
+        <RouterProvider router={router}/>      
+      </main>
+    </AuthProvider>
   );
 };
 

@@ -5,7 +5,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import { loginUser } from './AuthService';
 import AlertMessage from '../common/AlertMessage';
-import {jwtDecode} from 'jwt-decode';
+import { useAuth } from './AuthContext';
 
 const Login = () => {
     const[credentials, setCredentials] = useState({
@@ -15,6 +15,7 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+    const{login, isAuthenticated} = useAuth();
     
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
@@ -26,11 +27,10 @@ const Login = () => {
     };
 
     useEffect(() => {
-        const isAuthenticated = localStorage.getItem("authToken");
         if(isAuthenticated){
             navigate(from, {replace : true});
         }
-    });
+    }, [isAuthenticated, navigate, from]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -41,10 +41,7 @@ const Login = () => {
         }
         try {
             const data = await loginUser(credentials.email, credentials.password);
-            localStorage.setItem("authToken", data.token);
-            const decoded = jwtDecode(data.token);
-            localStorage.setItem("userRoles", JSON.stringify(decoded.roles));
-            localStorage.setItem("userId", decoded.id);
+            login(data.token);
             clearLoginForm();
             navigate(from, {replace : true});
         } catch (error) {

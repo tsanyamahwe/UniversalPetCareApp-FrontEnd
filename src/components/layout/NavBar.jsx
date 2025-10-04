@@ -1,15 +1,16 @@
 import React from 'react';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { logoutUser } from '../auth/AuthService';
+import { useAuth } from '../auth/AuthContext';
 
 const NavBar = () => {
-    const isLoggedIn = localStorage.getItem("authToken") && localStorage.getItem("authToken").trim() !=="";
-    const userRoleString = localStorage.getItem("userRoles");
-    const userRoles = userRoleString ? JSON.parse(userRoleString) : [];
-    const userId = localStorage.getItem("userId") || "";
+    const {user, isAuthenticated, logout} = useAuth();
+    const userRoles = user?.roles || [];
+    const userId = user?.id || "";
 
-    const handleLogout = () => {logoutUser();};
+    const handleLogout = () => {
+        logout();
+    };
 
   return (
     <Navbar expand = 'lg' sticky='top' className='nav-bg'>
@@ -33,7 +34,7 @@ const NavBar = () => {
                 </Nav>
                 <Nav>
                     <NavDropdown title='Account' id='basic-nav-dropdown'>
-                        {!isLoggedIn ? (
+                        {!isAuthenticated ? (
                             <React.Fragment>
                                 <NavDropdown.Item to={"/register-user"} as={Link}>
                                     Register

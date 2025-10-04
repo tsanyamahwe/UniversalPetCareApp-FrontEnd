@@ -1,15 +1,19 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const ProtectedRoute = ({children, allowedRoles = [], useOutlet = false}) => {
-    const isAuthenticated = localStorage.getItem("authToken");
-    const userRoles = JSON.parse(localStorage.getItem("userRoles")) || [];
+    const {user, isAuthenticated, loading} = useAuth();
     const location = useLocation();
 
+    if(loading){
+        return <div>Loading...</div>
+    }
     if(!isAuthenticated){
         return <Navigate to='/login' state={{from: location}} replace/>;
     };
 
+    const userRoles = user?.roles || [];
     const userRolesLower = userRoles.map((role) => role.toLowerCase());
     const allowedRolesLower = allowedRoles.map((role) => role.toLowerCase());
     const isAuthorized = userRolesLower.some((userRole) => allowedRolesLower.includes(userRole));

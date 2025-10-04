@@ -15,12 +15,16 @@ const BackgroundImageSlider = () => {
         <Carousel activeIndex={index} onSelect={handleSelect} interval={20000} controls={false} indicators={false} fade>
             {backgrounds.map((background, idx) => (
                 <Carousel.Item key={idx}>
-                    <img
-                        className='d-block w-100'
-                        src={background}
-                        alt={`Slide ${idx}`}
-                        style={{height: '100vh', objectFit: 'cover'}}
-                    />
+                    <div style={{
+                        height: '100vh',
+                        width: '100%',
+                        backgroundImage: `url(${background})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        imageRendering: 'crisp-edges'
+                    }}>
+                    </div>
                 </Carousel.Item>
             ))}
         </Carousel>

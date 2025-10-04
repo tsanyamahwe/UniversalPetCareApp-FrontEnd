@@ -30,7 +30,7 @@ const Veterinarian = () => {
                 setIsLoading(false);
             }, 1000);
         } catch (error) {
-            setErrorMessage(error.result.data.message);
+            setErrorMessage(error.result.data.message || 'An error occurred');
             setShowErrorAlert(true);
             setIsLoading(false);
         }
@@ -107,12 +107,11 @@ const Veterinarian = () => {
                     <Link to={`/book-appointment/${veterinarian.id}/new-appointment`} className='link'>Book Appointment</Link>
                     <hr/>
                     <p className='about'>About Dr. {veterinarian.firstName} {veterinarian.lastName}{" "}</p>
-                    <p className='justified-content'>With 8 years of veterinary experience, he specializes in small animal surgery and emergency medicine.
-                    He earned his Doctor of Veterinary Medicine degree from Texas A&M University and has since dedicated his
-                    career to providing compassionate care for cats and dogs. Outside the clinic, he enjoys photography and 
-                    spending time with his three cats.</p>
+                    <p className='justified-content'>
+                        {veterinarian.bio || 'No biography available for this veterinarian.'}
+                    </p>
                     <hr/>
-                    <Rating veterinarianId={veterinarian.id} onReviewSubmit={null}/>
+                    <Rating veterinarianId={veterinarian.id} onReviewSubmit={getUser}/>
                     <h4 className='text-center mb-4'>Reviews</h4>
                     <hr/>
                     {/*Render paginated reviews*/}
