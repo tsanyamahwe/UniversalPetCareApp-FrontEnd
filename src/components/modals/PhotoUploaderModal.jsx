@@ -19,9 +19,9 @@ const PhotoUploaderModal = ({userId, show, handleClose}) => {
     const getUser = async () => {
         try {
             const response = await getUserById(userId);
-            setSuccessMessage(response.data);
+            setUser(response.data);
         } catch (error) {
-            setErrorMessage(error.response.data.message);
+            setErrorMessage(error.response?.data?.message || error.message);
             setShowErrorAlert(true);
             console.error(error.message);
         }
@@ -34,16 +34,22 @@ const PhotoUploaderModal = ({userId, show, handleClose}) => {
     const handlePhotoUpload = async (e) => {
         e.preventDefault();
 
+        if(!file){
+            setErrorMessage("Please select a file to upload");
+            setShowErrorAlert(true);
+            return;
+        }
+
         try {
             const formData = new FormData();
             formData.append("file", file);
 
             //2. check if the user already has a photo
-            if(user && user.photo){
+            if(user && user.photoId){
                 const reader = new FileReader();
                 reader.readAsArrayBuffer(file);
                 reader.onload = async (e) => {  //3. if yes, update existing photo, else
-                    const fileBytes = new Unit8Array(e.target.result);
+                    const fileBytes = new Uint8Array(e.target.result);
                     const response = await updateUserPhoto(user.photoId, fileBytes);
                     setSuccessMessage(response.data);
                     window.location.reload();
@@ -51,12 +57,16 @@ const PhotoUploaderModal = ({userId, show, handleClose}) => {
                 };
             }else{ //4. create a new photo
                 const response = await uploadUserPhoto(userId, file);
-                setSuccessMessage(response.data);
-                window.location.reload();
+                setSuccessMessage(response.data || "Photo uploaded successfully");
                 setShowSuccessAlert(true);
+
+                setTimeout(() => {
+                    handleClose();
+                    window.location.reload();
+                }, 1500);
             }
         } catch (error) {
-            setErrorMessage(error.message);
+            setErrorMessage(error.response?.data?.message || error.message);
             setShowErrorAlert(true);
             console.error(error.message);
         }

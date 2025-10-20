@@ -1,8 +1,18 @@
-import { api } from "../utils/api";
+import api from "../utils/api";
 
 export async function bookAppointment(senderId, recipientId, appointmentRequest) {
     try {
-        const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem("token");
+
+        console.log("Token from localStorage: ", token);
+        console.log("Sender ID: ", senderId);
+        console.log("Recipient ID: ", recipientId);
+        console.log("Request data: ", appointmentRequest); 
+
+        if(!token){
+            console.log("No token found in localStorage!");
+        }
+
         const result = await api.post(
             `/appointments/book-appointment?senderId=${senderId}&recipientId=${recipientId}`, 
             appointmentRequest, {
@@ -10,9 +20,12 @@ export async function bookAppointment(senderId, recipientId, appointmentRequest)
                     Authorization: `Bearer ${token}`,
                 },
             });
-        console.log(result);
+        console.log("Success result: ", result);
         return result.data;
     } catch (error) {
+        console.error("Full error object: ", error);
+        console.error("Error response: ", error.response);
+        console.error("Error request: ", error.request);
         throw error;
     }
 }

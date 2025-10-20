@@ -11,11 +11,11 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         const initAuth = () => {
-            const token = localStorage.getItem("authToken");
+            const token = localStorage.getItem("token");
             if(token && token.trim() !== ""){
                 try {
                     const decoded = jwtDecode(token);
-                    const roles = JSON.parse(localStorage.getItem("userRoles")) || [];
+                    const roles = JSON.parse(localStorage.getItem("userRoles")) || decoded.roles || [];
                     setUser({
                         id: localStorage.getItem("userId") || decoded.id,
                         roles: decoded.roles,
@@ -23,9 +23,12 @@ export const AuthProvider = ({children}) => {
                     });
                     setIsAuthenticated(true);
                 } catch (error) {
-                    localStorage.removeItem("authToken");
+                    console.error("Invalid or expired token:", error);
+                    localStorage.removeItem("token");
                     localStorage.removeItem("userRoles");
                     localStorage.removeItem("userId");
+                    setIsAuthenticated(false);
+                    setUser(null);
                 }
             }
             setLoading(false);
@@ -34,23 +37,38 @@ export const AuthProvider = ({children}) => {
     }, []);
 
     const login = (token) => {
-        localStorage.setItem("authToken", token);
-        const decoded = jwtDecode(token);
-        localStorage.setItem("userRoles", JSON.stringify(decoded.roles));
-        localStorage.setItem("userId", decoded.id);
-
-        setUser({
-            id: decoded.id,
-            roles: decoded.roles,
-            token: token
-        });
-        setIsAuthenticated(true);
+        try {
+            const decoded = jwtDecode(token);
+            localStorage.setItem("token", token);
+            localStorage.setItem("userRoles", JSON.stringify(decoded.roles || []));
+            localStorage.setItem("userId", decoded.id);
+            setUser({
+                id: decoded.id,
+                email: decoded.sub || decoded.email,
+                roles: decoded.roles || [],
+                token: token
+            });
+            setIsAuthenticated(true);
+        } catch (error) {
+            console.error("Error decoding token: ", error);
+        } 
     };
 
     const logout = () => {
-        logoutUser();
+        try {
+            //server-side log out
+            logoutUser();
+        } catch (error) {
+            console.error('Logout error:', error);
+        }finally{
+         //client-side log out
+        localStorage.removeItem("token");
+        localStorage.removeItem("userRoles");
+        localStorage.removeItem("userId");
+        //clear React state
         setUser(null);
         setIsAuthenticated(false);
+        }
     };
 
     return(

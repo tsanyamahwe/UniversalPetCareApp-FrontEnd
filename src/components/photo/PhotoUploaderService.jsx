@@ -15,10 +15,12 @@ export async function updateUserPhoto(photoId, photoData) {
 
 export async function uploadUserPhoto(userId, photoData) {
     try {
-        const formData = new FormData;
+        const formData = new FormData();
         formData.append("file", photoData);
         formData.append("userId", userId);
-        const response = await api.post("photos/photo/upload", formData);
+        const response = await api.post("photos/photo/upload", formData, {
+            headers: {"Content-Type": "mulipart/form-data"},
+        });
         return response.data;
     } catch (error) {
         throw error;

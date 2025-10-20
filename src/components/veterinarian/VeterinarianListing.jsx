@@ -6,14 +6,22 @@ import VeterinarianSearch from './VeterinarianSearch';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import NoDataAvailable from '../hooks/NoDataAvailable';
 import LoadSpinner from '../common/LoadSpinner';
+import { useLocation } from 'react-router-dom';
 
 const VeterinarianListing = () => {
     const [veterinarians, setVeterinarians] = useState([]);
     const [allVeterinarians, setAllVeterinarians] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
+    const location = useLocation();
+
     const{errorMessage, setErrorMessage, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     useEffect(() => {
+        fetchVeterinarians();
+    }, [location.pathname]);
+
+    const fetchVeterinarians = () => {
+        setIsLoading(true);
         getVeterinarians().then((data) => {
             setVeterinarians(data.data);
             setAllVeterinarians(data.data);
@@ -23,8 +31,9 @@ const VeterinarianListing = () => {
         }).catch((error) => {
             setErrorMessage(error.response.data.message); 
             setShowErrorAlert(true);
+            setIsLoading(false);
         });
-    }, []);
+    };
     
     if(veterinarians.length === 0){
         return <p>No veterinarians found at this time</p>;

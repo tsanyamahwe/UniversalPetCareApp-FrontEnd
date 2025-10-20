@@ -6,6 +6,7 @@ import UseMessageAlerts from '../hooks/UseMessageAlerts';
 import { loginUser } from './AuthService';
 import AlertMessage from '../common/AlertMessage';
 import { useAuth } from './AuthContext';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
     const[credentials, setCredentials] = useState({
@@ -15,8 +16,8 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+
     const{login, isAuthenticated} = useAuth();
-    
     const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
 
     const handleInputChange = (e) => {
@@ -41,17 +42,26 @@ const Login = () => {
         }
         try {
             const data = await loginUser(credentials.email, credentials.password);
+            
+            localStorage.setItem("token", data.token);
+            const decoded = jwtDecode(data.token);
+            const userId = decoded.id || "";
+            const userRoles = decoded.roles || [];
+
+            localStorage.setItem("userId", userId);
+            localStorage.setItem("userRoles", JSON.stringify(userRoles));
+
             login(data.token);
             clearLoginForm();
             navigate(from, {replace : true});
         } catch (error) {
-            setErrorMessage(error.response.data.data);
+            setErrorMessage(error.response.data.data || "Login failed. Please try again");
             setShowErrorAlert(true);
         }
     };
 
     const clearLoginForm = () => {
-        setCredentials({email: " ", password: " "});
+        setCredentials({email: "", password: ""});
         setShowErrorAlert(false);
     };
 

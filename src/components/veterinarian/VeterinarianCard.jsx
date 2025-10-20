@@ -18,7 +18,9 @@ const VeterinarianCard = ({vet}) => {
                     <div className='flex-grow-1 ml-3 px-5'>
                         <Card.Title className="title">Dr. {vet.firstName} {vet.lastName}</Card.Title>
                         <Card.Title><h6>{vet.specialization}</h6></Card.Title>
-                        <Card.Text className="review rating-stars">Reviews: <RatingStars stars={vet.averageRating}/>({vet.totalReviewer})</Card.Text>
+                        <Card.Text className="review rating-stars">
+                            Reviews: <RatingStars rating={vet.averageRating}/>({vet.totalReviewer})
+                        </Card.Text>
                         <Link to={`/book-appointment/${vet.id}/new-appointment`} className="link">Book Appointment</Link>
                     </div>
                 </Accordion.Header>

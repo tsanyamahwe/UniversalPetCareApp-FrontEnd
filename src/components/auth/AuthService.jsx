@@ -27,22 +27,22 @@ export const loginUser = async(email, password) => {
     }
 };
 
-export const logoutUser = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userRoles");
-    window.location.href = "/";
+export const logoutUser = async () => {
+    try {
+        await api.post("/auth/logout");
+    } catch (error) {
+        console.error("Backend logout failed:", error);
+    }finally{
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userRoles");
+        window.location.href = "/";
+    }
 };
 
 export async function requestPasswordReset(email) {
     try {
-        const response = await api.post("/auth/request-password-reset",
-            {email}, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
+        const response = await api.post("/auth/request-password-reset", {email});
         return response.data;
     } catch (error) {
         throw error;

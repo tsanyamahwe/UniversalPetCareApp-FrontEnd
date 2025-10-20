@@ -2,8 +2,9 @@ import React from 'react';
 import { UserType } from '../utils/Utilities';
 import UserImage from '../common/UserImage';
 import RatingStars from '../rating/RatingStars';
+import { Button } from 'react-bootstrap';
 
-const Review = ({review, userType}) => {
+const Review = ({review, userType, onEdit, onDelete}) => {
     const displayName = 
         userType === UserType.PATIENT 
             ? `You rated Dr. ${review.veterinarianName}`
@@ -36,6 +37,25 @@ const Review = ({review, userType}) => {
                     </div>
                 </div>  
             </div> 
+            {userType === UserType.PATIENT && (
+                <div>
+                    <Button
+                        variant='warning'
+                        size='sm'
+                        className='me-2'
+                        onClick={() => onEdit(review)}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        variant='danger'
+                        size='sm'
+                        onClick={() => onDelete(review.id)}
+                    >
+                        Delete
+                    </Button>
+                </div>
+            )}
             <hr/>   
         </div>
     );

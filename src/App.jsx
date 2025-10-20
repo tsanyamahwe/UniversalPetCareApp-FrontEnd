@@ -17,6 +17,9 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import PasswordResetRequest from './components/auth/PasswordResetRequest';
 import ResetPassword from './components/auth/ResetPassword';
 import { AuthProvider } from './components/auth/AuthContext';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './components/config/QueryClientConfig';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function App() {
   const router = createBrowserRouter(createRoutesFromElements(
@@ -38,6 +41,7 @@ function App() {
               <Route path='/book-appointment/:recipientId/new-appointment' element={<BookAppointment/>}/>
               <Route path='/update-user/:userId/update' element={<UserUpdate/>}/> 
               <Route path='/user-dashboard/:userId/my-dashboard' element={<UserDashboard/>}/> 
+              <Route path='/user-dashboard' element={<UserDashboard/>}/> 
           </Route>
         /**===================Routes accessible for authenticated users=========================== */
 
@@ -50,9 +54,12 @@ function App() {
   ))
   return (
     <AuthProvider>
-      <main className="">
-        <RouterProvider router={router}/>      
-      </main>
+      <QueryClientProvider client={queryClient}>
+        <main className="">
+          <RouterProvider router={router}/>      
+        </main>
+        {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false}/>}
+      </QueryClientProvider>
     </AuthProvider>
   );
 };

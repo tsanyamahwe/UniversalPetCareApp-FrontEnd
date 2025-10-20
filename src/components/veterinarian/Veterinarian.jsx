@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {Card, Col, Container, Row } from 'react-bootstrap';
+import {Alert, Card, Col, Container, Row } from 'react-bootstrap';
 import UserImage from '../common/UserImage';
 import { BsFillArrowRightSquareFill } from 'react-icons/bs';
 import RatingStars from '../rating/RatingStars';
@@ -11,34 +11,81 @@ import { getUserById } from '../user/UserService';
 import AlertMessage from '../common/AlertMessage';
 import Paginator from '../common/Paginator';
 import LoadSpinner from '../common/LoadSpinner';
+import { findEligibleAppointment } from '../review/ReviewService';
 
 const Veterinarian = () => {
     const[veterinarian, setVeterinarian] = useState(null);
     const[isLoading, setIsLoading] = useState(true);
-    const{vetId} = useParams();
     const[currentPage, setCurrentPage] = useState(1);
     const[reviewPerPage] = useState(4);
-    
+    const[eligibleAppointment, setEligibleAppointment] = useState(null);
+    const[existingReview, setExistingReview] = useState(null);
+
+    const userId = localStorage.getItem("userId");
+    const{vetId} = useParams();
     const{successMessage, errorMessage, setSuccessMessage, setErrorMessage, showSuccessAlert, showErrorAlert, setShowSuccessAlert, setShowErrorAlert} = UseMessageAlerts();
     
+     useEffect(() => {
+        getUser();
+    }, [vetId, userId]);
+
     const getUser = async () => {
         setIsLoading(true);
         try {
             const result = await getUserById(vetId);
             setVeterinarian(result.data);
+            if(userId){
+                await checkEligibleAppointment();
+            }
             setTimeout(() => {
                 setIsLoading(false);
             }, 1000);
         } catch (error) {
-            setErrorMessage(error.result.data.message || 'An error occurred');
+            setErrorMessage(error.result?.data?.message || 'An error occurred');
             setShowErrorAlert(true);
             setIsLoading(false);
         }
     };
 
-    useEffect(() => {
+    const checkEligibleAppointment = async () => {
+        try {
+            const response = await findEligibleAppointment(userId, vetId);
+            console.log("Eligible appointment response: ", response);
+            if(response && response.data){
+                console.log("Eligible appointment found: ", response.data);
+                setEligibleAppointment(response.data);
+            }else{
+                console.log("No eligible appointment found");
+                setEligibleAppointment(null);
+            }
+        } catch (error) {
+            console.log("Error checking eligible appointment:", error);
+            if(error.response && error.response.status === 404){
+                console.error("No eligible appointment found");
+                await checkExistingReview();
+            }
+            setEligibleAppointment(null);
+        }  
+    };
+
+    const checkExistingReview = async () => {
+        try{
+            const userReview = veterinarian?.reviews?.find(review => review.patient?.id === parseInt(userId));
+            if(userReview){
+                console.log("Found existing review: ", userReview);
+                setExistingReview(userReview);
+            }else{
+                setExistingReview(null);
+            }
+        }catch(error){
+            console.log("Error checking existing review:", error);
+            setExistingReview(null);
+        }
+    };
+
+    const handleReviewSubmitted = () => {
         getUser();
-    }, [vetId]);
+    };
 
     if(isLoading){
         return(
@@ -48,7 +95,7 @@ const Veterinarian = () => {
         );
     };
 
-    if (showErrorAlert) {
+    if(showErrorAlert) {
         return (
             <Container>
                 <div className="alert alert-danger">
@@ -58,7 +105,7 @@ const Veterinarian = () => {
         );
     };
 
-    if (!veterinarian) {
+    if(!veterinarian) {
         return (
             <Container>
                 <div className="alert alert-warning">
@@ -74,9 +121,7 @@ const Veterinarian = () => {
 
   return (
     <Container className='d-flex justify-content-center align-items-center mt-4'>  
-        {showErrorAlert && (
-            <AlertMessage type={"danger"} message={errorMessage}/>
-        )}
+        {showErrorAlert && (<AlertMessage type={"danger"} message={errorMessage}/>)}
         {veterinarian && (
             <Card className='review-card mt-2'>
                 <Row>
@@ -111,7 +156,23 @@ const Veterinarian = () => {
                         {veterinarian.bio || 'No biography available for this veterinarian.'}
                     </p>
                     <hr/>
-                    <Rating veterinarianId={veterinarian.id} onReviewSubmit={getUser}/>
+                    {userId && eligibleAppointment ? (
+                        <Rating 
+                            veterinarianId={veterinarian.id} 
+                            appointmentId={eligibleAppointment.id}
+                            onReviewSubmit={handleReviewSubmitted}
+                        />
+                    ):userId && !eligibleAppointment ? (
+                        <Alert variant='info' style={{ textAlign: 'justify' }}>
+                            You can leave a review after completing an appointment with Dr. {veterinarian.firstName} {veterinarian.lastName},
+                            or you may have already reviewed your completed appointment.
+                        </Alert>
+                    ):(
+                        <Alert>
+                            Please <Link to="/login">Log in</Link> to leave a review after your appointment.
+                        </Alert>
+                    )}
+                    
                     <h4 className='text-center mb-4'>Reviews</h4>
                     <hr/>
                     {/*Render paginated reviews*/}
@@ -124,7 +185,7 @@ const Veterinarian = () => {
                             />
                         ))
                     ):(
-                        <p>No reviews available yet</p>
+                        <p className='text-center text-muted'>No reviews available yet. Be the first to leave a review!</p>
                     )}
                     <Paginator
                         itemsPerPage={reviewPerPage}

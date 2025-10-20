@@ -13,6 +13,7 @@ import UserInformation from '../common/UserInformation';
 import { Link, useParams } from 'react-router-dom';
 import AppointmentFilter from './AppointmentFilter';
 import Paginator from '../common/Paginator';
+import AppointmentReviewManager from '../review/AppointmentReviewManager';
 
 const UserAppointments = ({user, appointments:initialAppointments}) => {
     const[appointments, setAppointments] = useState(initialAppointments);
@@ -199,7 +200,8 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
                 const formattedStatus = formatAppointmentStatus(appointment.status);
                 const statusColor = colors[formattedStatus] || colors["default"];
                 const isWaitingForApproval = formattedStatus === "waiting-for-approval";
-                const isApproved = formattedStatus === "approved";                
+                const isCancelled = formattedStatus === "cancelled";   
+                const isCompleted = formattedStatus === "completed";             
                 return(
                     <Accordion.Item eventKey={index} key={index} className='mb-2'>
                         <Accordion.Header>
@@ -224,23 +226,33 @@ const UserAppointments = ({user, appointments:initialAppointments}) => {
                                     <p>Time:<span className='text-info'>{""}{appointment.appointmentTime}</span>{""}</p>
                                     <p>Reason: {appointment.reason}</p>
                                 </Col>
-                                <Col md={8} className='mt-2'>
-                                <h5>Pets:</h5>
-                                <PetsTable
-                                    pets={appointment.pets}
-                                    appointmentId={appointment.id}
-                                    onPetsUpdate={handlePetsUpdate}
-                                    isEditable={isWaitingForApproval}
-                                    isPatient={user.userType === UserType.PATIENT}
-                                />
+                                    <Col md={8} className='mt-2'>
+                                    <h5>Pets:</h5>
+                                    <PetsTable
+                                        pets={appointment.pets}
+                                        appointmentId={appointment.id}
+                                        onPetsUpdate={handlePetsUpdate}
+                                        isEditable={isWaitingForApproval}
+                                        isPatient={user.userType === UserType.PATIENT}
+                                    />
                                 </Col>
-                                {isApproved && (
+                                {!(isCancelled || isWaitingForApproval) && (
                                     <UserInformation
                                         userType={user.userType}
                                         appointment={appointment}
                                     />
                                 )}
                             </Row>
+                            {user && user.userType === UserType.PATIENT && isCompleted && (
+                                <div className='mt-4 pt-3 border-top'>
+                                    <h5>Review Status:</h5>
+                                    <AppointmentReviewManager
+                                        appointmentId={appointment.id}
+                                        veterinarianId={appointment.veterinarian ? appointment.veterinarian.id : null}
+                                        onReviewAction={() => fetchAppointment(appointment.id)}
+                                    />
+                                </div>
+                            )}
                             {showErrorAlert && (<AlertMessage type={"danger"} message={errorMessage}/>)}
                             {showSuccessAlert && (<AlertMessage type={"success"} message={successMessage}/>)}
                             {user && user.userType === UserType.PATIENT &&(

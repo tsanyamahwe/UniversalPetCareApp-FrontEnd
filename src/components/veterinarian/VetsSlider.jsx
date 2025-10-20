@@ -13,15 +13,12 @@ const VetsSlider = ({vets}) => {
                     <Row className='align-items-center'>
                         <Col xs={12} md={4} className='text-center'>
                             <Card.Img
-                                src={
-                                    vet.photo ? `data:image/png;base64, ${vet.photo}` : placeholderImage
-                                }
-                                alt={"photo"}
+                                src={vet.photo ? `data:image/png;base64, ${vet.photo}` : placeholderImage}
+                                alt={`Dr. ${vet.firstName} ${vet.lastName}`}
                                 style={{
-                                    maxWidth: "200px",
-                                    maxHeight: "200px",
-                                    borderRadius: "50%",
-                                    objectFit: "contain"
+                                    width: "200px", height: "200px", borderRadius: "50%", 
+                                    objectFit: "cover", objectPosition: "center", border: "2px solid #e5e7eb", 
+                                    backgroundColor: "#f3f4f6", display: "block", margin: "0 auto"
                                 }}
                             />
                         </Col>
@@ -35,15 +32,11 @@ const VetsSlider = ({vets}) => {
                                 </p>
                             </div>
                             <p>{vet.specialization}</p>
-                            <p>
-                                <span className='text-info'>
-                                    Dr. {`${vet.firstName} ${vet.lastName}`} is a {""}{vet.specialization} {""}
-                                </span>
-                                With 8 years of veterinary experience, he specializes in small animal surgery and 
-                                emergency medicine. He earned his Doctor of Veterinary Medicine degree from Texas 
-                                A&M University and has since dedicated his career to providing compassionate care 
-                                for cats and dogs. Outside the clinic, he enjoys photography and spending time 
-                                with his three cats.
+                            <p className='text-muted' style={{textAlign: "justify", marginRight: "3rem"}}>
+                                {vet.bio
+                                    ? vet.bio
+                                    : `Dr. ${vet.firstName} ${vet.lastName} is a ${vet.specialization?.toLowerCase() || "veterinarian"} who provides compassionate care for pets.`
+                                }
                             </p>
                             <p>
                                 <Link 

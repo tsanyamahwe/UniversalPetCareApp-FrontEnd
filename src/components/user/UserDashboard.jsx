@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
+import { Card, Col, Container, Modal, Row, Tab, Tabs } from 'react-bootstrap';
 import UserProfile from './UserProfile';
 import { deleteUserAccount, getUserById } from './UserService';
 import UseMessageAlerts from '../hooks/UseMessageAlerts';
@@ -12,35 +12,52 @@ import CustomPieChart from '../charts/CustomPieChart';
 import NoDataAvailable from '../common/NoDataAvailable';
 import { useParams } from 'react-router-dom';
 import { logoutUser } from '../auth/AuthService';
+import { deleteReview, getPatientAppointments } from '../review/ReviewService';
+import Rating from '../rating/Rating';
+import { useAuth } from '../auth/AuthContext';
 
 const UserDashboard = () => {
     const[user, setUser] = useState(null);
     const[appointments, setAppointments] = useState([]);
     const[appointmentData, setAppointmentData] = useState();
-    
-    const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
+    const[showEditModal, setShowEditModal] = useState(false);
+    const[editingReview, setEditingReview] = useState(null);
+    const[refreshKey, setRefreshKey] = useState(0);
+    const[loading, setLoading] = useState(true);
     const[activeKey, setActiveKey] = useState(() => {
         const storedActiveKey = localStorage.getItem("activeKey");
         return storedActiveKey ? storedActiveKey : "profile";
     });
 
-    const {userId} = useParams();
+    const{successMessage, setSuccessMessage, errorMessage, setErrorMessage, showSuccessAlert, setShowSuccessAlert, showErrorAlert, setShowErrorAlert} = UseMessageAlerts();
+    const{userId} = useParams();
+    const {user: authUser, refreshUser} = useAuth();
     const currentUserId = localStorage.getItem("userId");
     const isCurrentUser = userId === currentUserId;
 
+    const fetchAppointment = async (id) => {
+        try {
+            const result = await getPatientAppointments(id);
+            setAppointmentData(result.data);
+        } catch (error) {
+            console.error("Failed to fetch appointments:", error);
+        }
+    };
+
+    const getUserAndAppointments = async () => {
+        try {
+            const result = await getUserById(userId);
+            setUser(result.data);
+            await fetchAppointment(userId);
+        } catch (error) {
+            setErrorMessage(error.response.data.message);
+            setShowErrorAlert(true);
+            console.error(error.message);
+        }
+    };
+
     useEffect(() => {
-        const getUser = async () => {
-            try {
-                const result = await getUserById(userId);
-                setUser(result.data);
-                setAppointments(result.data.appointments);
-            } catch (error) {
-                setErrorMessage(error.response.data.message);
-                setShowErrorAlert(true);
-                console.error(error.message);
-            }
-        };
-        getUser();
+        getUserAndAppointments();
     }, [userId]);
 
     useEffect(() => {
@@ -63,6 +80,48 @@ const UserDashboard = () => {
             setAppointments(user.appointments);
         }
     }, [user]);
+
+    const handleEditReview = (review) => {
+        setShowSuccessAlert(false);
+        setShowErrorAlert(false);
+
+        setEditingReview(review);
+        setShowEditModal(true);
+    };
+
+    const handleDeleteReview = async (reviewId) => {
+        if(window.confirm("Are you sure you want to delete this review?")){
+            try {
+                setShowSuccessAlert(false);
+                setShowErrorAlert(false);
+
+                const response = await deleteReview(reviewId);
+                await getUserAndAppointments();
+
+                setRefreshKey(prev => prev + 1);
+                setSuccessMessage(response.message);
+                setShowSuccessAlert(true);
+            } catch (error) {
+                setShowSuccessAlert(false);
+                setErrorMessage(error.response?.data?.message || "Failed to delete the review");
+                setShowErrorAlert(true);
+            }
+        }
+    };
+
+    const handleReviewUpdated = async () => {
+        setShowSuccessAlert(false);
+        setShowErrorAlert(false);
+
+        setShowEditModal(false);
+        setEditingReview(null);
+
+        await getUserAndAppointments();
+
+        setRefreshKey(prev => prev + 1);
+        setSuccessMessage("Review updated successfully!");
+        setShowSuccessAlert(true);   
+    };
 
     const handlePhotoRemoval = async () => {
         try {
@@ -148,9 +207,11 @@ const UserDashboard = () => {
                                     {user && user.reviews && user.reviews.length > 0 ? (
                                         user.reviews.map((review, index) => (
                                             <Review 
-                                                key={index} 
+                                                key={`${review.id || index}-${refreshKey}`} 
                                                 review={review}
                                                 userType={user.userType || UserType.PATIENT}
+                                                onEdit={handleEditReview}
+                                                onDelete={handleDeleteReview}
                                             />
                                         ))
                                     ):(
@@ -161,7 +222,22 @@ const UserDashboard = () => {
                         </Card>
                     </Container>
                 </Tab>
-            </Tabs>    
+            </Tabs>  
+            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit Review</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {editingReview && (
+                        <Rating
+                            veterinarianId={editingReview.veterinarianId}
+                            appointmentId={editingReview.appointmentId}
+                            initialReviewData={editingReview}
+                            onReviewSubmit={handleReviewUpdated}
+                        />
+                    )}
+                </Modal.Body>
+            </Modal>  
     </Container>
   )
 }
