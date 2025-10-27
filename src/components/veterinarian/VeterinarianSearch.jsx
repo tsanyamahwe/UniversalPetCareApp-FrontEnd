@@ -60,6 +60,14 @@ const VeterinarianSearch = ({onSearchResult = () => {}}) => {
         setSearchQuery(updatedQuery);
         if (name === 'specialization') {
             if (value === '') {
+                //reset all related fields and UI states
+                setShowDateTime(false);
+                setSearchQuery({
+                    specialization: "",
+                    date: null,
+                    time: null,
+                });
+                //refresh everything
                 fetchAllVeterinarians();
                 refreshSpecializations();
             }
