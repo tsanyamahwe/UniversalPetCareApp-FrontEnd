@@ -20,6 +20,7 @@ import { AuthProvider } from './components/auth/AuthContext';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './components/config/QueryClientConfig';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import DataDeletion from './components/utils/DataDeletion';
 
 function App() {
   const router = createBrowserRouter(createRoutesFromElements(
@@ -33,7 +34,8 @@ function App() {
           <Route path='/email-verification' element={<EmailVerification/>}/> 
           <Route path='/vet-reviews/:vetId/veterinarian' element={<Veterinarian/>}/>
           <Route path='/password-reset-request' element={<PasswordResetRequest/>}/>
-          <Route path ='/reset-password' element={<ResetPassword/>}/>
+          <Route path='/reset-password' element={<ResetPassword/>}/>
+          <Route path='/data-deletion' element={<DataDeletion/>}/>
         /**=====================Routes accessible without authentication=========================== */
           
         /**====================Routes accessible for authenticated users=========================== */
@@ -51,7 +53,7 @@ function App() {
           </Route> 
         /**=========================Routes accessible for admin ONLY============================== */
      </Route>
-  ))
+  ));
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>

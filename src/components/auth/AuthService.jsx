@@ -1,4 +1,5 @@
 import api from "../utils/api";
+import { UserType } from "../utils/Utilities";
 
 export const verifyEmail = async(token) =>{
     try {
@@ -126,3 +127,88 @@ export const changeUserPassword = async (userId, newPassword) => {
     }
 };
 
+export const getGoogleIdToken = async (idTokenOrData) => {
+    try {
+        //If it's just a token string, this is a login attempt
+        if(typeof idTokenOrData === 'string'){
+            const result = await api.post("/auth/social/login", {
+                provider: "GOOGLE", 
+                token: idTokenOrData
+            });
+            return result;
+        }
+        //If it's an object with userType, this is a registration
+        if(idTokenOrData.userType){
+            const result = await api.post("/auth/social/register", {
+                provider: "GOOGLE",
+                token: idTokenOrData.token,
+                email: idTokenOrData.email,
+                firstName: idTokenOrData.firstName,
+                lastName: idTokenOrData.lastName,
+                userType: idTokenOrData.userType,
+                gender: idTokenOrData.gender,
+                phoneNumber: idTokenOrData.phoneNumber,
+                specialization: idTokenOrData.specialization || '',
+                vetLicence: idTokenOrData.vetLicence || ''
+            });
+            return result;
+        }
+        // Otherwise, treat as login with token object
+        const result = await api.post("/auth/social/login", {provider: "GOOGLE", token: idTokenOrData.token});
+        return result;
+    } catch (error) {
+        console.error('Error calling Google API:', error);
+       throw error;
+    }
+};
+
+export const getFacebookAccessToken = async (accessTokenOrData) => {
+    try {
+        //If it is just a token string, this is a login attempt 
+        if(typeof accessTokenOrData === 'string'){
+            const response = await api.post("/auth/social/login", {
+                provider: "FACEBOOK",
+                token: accessTokenOrData
+            });
+            return response;
+        } 
+        //If its an object with userType, this is a registration
+        if(accessTokenOrData.userType){
+            const response = await api.post("/auth/social/register", {
+                provider: "FACEBOOK",
+                token: accessTokenOrData.token,
+                email: accessTokenOrData.email,
+                firstName: accessTokenOrData.firstName,
+                lastName: accessTokenOrData.lastName,
+                userType: accessTokenOrData.userType,
+                gender: accessTokenOrData.gender,
+                phoneNumber: accessTokenOrData.phoneNumber,
+                specialization: accessTokenOrData.specialization || '',
+                vetLicense: accessTokenOrData.vetLicense || ''
+            });
+            return response;
+        }
+        //Otherwise treat as a login with token object
+        const response = await api.post("/auth/social/login", {provider: "FACEBOOK", token: accessTokenOrData.token});
+        return response;
+    } catch (error) {
+        console.error('Error calling Facebook auth API:', error);
+        throw error;
+    }
+};
+
+export const completeSocialRegistration = async (registrationData) => {
+    try{
+        const response = await api.post("/auth/social/complete-registration", registrationData);
+        return response;
+    }catch(error) {
+        console.error('Error completeing social registraton:', error);
+        if(error.response){
+            throw new Error(error.response.data.error || error.response.data.message || 'Registration completion failed');
+        }else if(error.request){
+            throw new Error('No response from server. Please check your connection.');
+        }else{
+            throw new Error('Failed to complete registration');
+        }
+    }
+};

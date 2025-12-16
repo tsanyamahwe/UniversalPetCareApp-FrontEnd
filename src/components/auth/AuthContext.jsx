@@ -11,27 +11,39 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         const initAuth = () => {
-            const token = localStorage.getItem("token");
-            if(token && token.trim() !== ""){
-                try {
+            try{
+                const token = localStorage.getItem("token");
+                if(token && token.trim() !== ""){
                     const decoded = jwtDecode(token);
-                    const roles = JSON.parse(localStorage.getItem("userRoles")) || decoded.roles || [];
-                    setUser({
-                        id: localStorage.getItem("userId") || decoded.id,
-                        roles: decoded.roles,
-                        token: token
-                    });
-                    setIsAuthenticated(true);
-                } catch (error) {
-                    console.error("Invalid or expired token:", error);
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("userRoles");
-                    localStorage.removeItem("userId");
-                    setIsAuthenticated(false);
-                    setUser(null);
+                    const currentTime = Date.now()/1000;
+                    if(decoded.exp && decoded.exp < currentTime){
+                        console.log("Token expired");
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("userRoles");
+                        localStorage.removeItem("userId");
+                        setIsAuthenticated(false);
+                        setUser(null);
+                    }else{
+                        const roles = JSON.parse(localStorage.getItem("userRoles")) || decoded.roles || [];
+                        setUser({
+                            id: localStorage.getItem("userId") || decoded.id,
+                            email: decoded.sub || decoded.email,
+                            roles: decoded.roles,
+                            token: token
+                        });
+                        setIsAuthenticated(true);
+                    }
                 }
+            }catch(error) {
+                console.error("Invalid or expired token:", error);
+                localStorage.removeItem("token");
+                localStorage.removeItem("userRoles");
+                localStorage.removeItem("userId");
+                setIsAuthenticated(false);
+                setUser(null);
+            }finally{
+                setLoading(false);
             }
-            setLoading(false);
         };
         initAuth();
     }, []);
@@ -49,8 +61,10 @@ export const AuthProvider = ({children}) => {
                 token: token
             });
             setIsAuthenticated(true);
+            return true;
         } catch (error) {
             console.error("Error decoding token: ", error);
+            return false;
         } 
     };
 
@@ -71,14 +85,16 @@ export const AuthProvider = ({children}) => {
         }
     };
 
+    const value = {
+        user,
+        isAuthenticated,
+        loading,
+        login,
+        logout
+    };
+
     return(
-        <AuthContext.Provider value={{
-            user,
-            isAuthenticated,
-            loading,
-            login,
-            logout
-        }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

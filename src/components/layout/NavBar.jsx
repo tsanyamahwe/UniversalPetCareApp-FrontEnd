@@ -43,6 +43,10 @@ const NavBar = () => {
                                 <NavDropdown.Item to={"/login"} as={Link}>
                                     Login
                                 </NavDropdown.Item>
+                                <NavDropdown.Divider/>
+                                <NavDropdown.Item to={"/data-deletion"} as={Link}>
+                                    Deregister
+                                </NavDropdown.Item>
                             </React.Fragment>
                         ):(
                             <React.Fragment>
