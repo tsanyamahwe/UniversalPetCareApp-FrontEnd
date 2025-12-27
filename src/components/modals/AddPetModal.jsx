@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import PetColorSelector from '../pets/PetColorSelector';
 import PetTypeSelector from '../pets/PetTypeSelector';
 import PetBreedSelector from '../pets/PetBreedSelector';
 
 
-const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
-    const [petData, setPetData] = useState({
+const AddPetModal = ({ show, onHide, onAddPet, appointmentId, initialData = null, isEditing = false }) => {
+    const[petData, setPetData] = useState({
         name: '',
         type: '',
         breed: '',
@@ -14,8 +14,29 @@ const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
         age: ''
     });
 
-    const [errors, setErrors] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const[errors, setErrors] = useState({});
+    const[isSubmitting, setIsSubmitting] = useState(false);
+
+    //Load initial data when editing
+    useEffect(() => {
+        if(show && initialData){
+            setPetData({
+                name: initialData.name || '',
+                type: initialData.type || '',
+                breed: initialData.breed || '',
+                color: initialData.color || '',
+                age: initialData.age || ''
+            });
+        }else if(show && !initialData){
+            setPetData({
+                name: '',
+                type: '',
+                breed: '',
+                color: '',
+                age: ''
+            });
+        }
+    }, [show, initialData])
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -72,33 +93,33 @@ const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-        return;
-    }
+        e.preventDefault();
+        
+        if (!validateForm()) {
+            return;
+        }
 
-    setIsSubmitting(true);
-    
-    try {
-        const response = await onAddPet(appointmentId, petData);
-        setPetData({
-            name: '',
-            type: '',
-            breed: '',
-            color: '',
-            age: ''
-        });
-        setErrors({});
-        onHide();
-        return response;
-    } catch (error) {
-        console.error('Error adding pet:', error);
-        throw error; 
-    } finally {
-        setIsSubmitting(false);
-    }
-};
+        setIsSubmitting(true);
+        
+        try {
+            const response = await onAddPet(appointmentId, petData);
+            setPetData({
+                name: '',
+                type: '',
+                breed: '',
+                color: '',
+                age: ''
+            });
+            setErrors({});
+            onHide();
+            return response;
+        } catch (error) {
+            console.error('Error adding/updating pet:', error);
+            throw error; 
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const handleClose = () => {
         // Reset form when closing
@@ -122,7 +143,7 @@ const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
                     <Form.Group className="mb-3">
-                        <Form.Label>Pet Name *</Form.Label>
+                        <Form.Label>Pet Name <span className='text-danger'>*</span></Form.Label>
                         <Form.Control
                             type="text"
                             name="name"
@@ -137,7 +158,7 @@ const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Age *</Form.Label>
+                        <Form.Label>Age <span className='text-danger'>*</span></Form.Label>
                         <Form.Control
                             type="number"
                             name="age"
@@ -154,7 +175,7 @@ const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
 
                     {/* Pet Color Selector */}
                     <Form.Group className="mb-3">
-                        <Form.Label>Pet Color *</Form.Label>
+                        <Form.Label>Pet Color <span className='text-danger'>*</span></Form.Label>
                         <PetColorSelector
                             value={petData.color}
                             onChange={handleInputChange}
@@ -169,11 +190,11 @@ const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
                     {/* Pet Type and Breed Section */}
                     <fieldset className="mb-3">
                         <legend style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                            Pet Type and Breed *
+                            Pet Type and Breed
                         </legend>
                         <Form.Group as={Row} className="mb-2">
                             <Col md={6}>
-                                <Form.Label>Pet Type</Form.Label>
+                                <Form.Label>Pet Type <span className='text-danger'>*</span></Form.Label>
                                 <PetTypeSelector
                                     value={petData.type}
                                     onChange={handleInputChange}
@@ -185,7 +206,7 @@ const AddPetModal = ({ show, onHide, onAddPet, appointmentId }) => {
                                 )}
                             </Col>
                             <Col md={6}>
-                                <Form.Label>Pet Breed</Form.Label>
+                                <Form.Label>Pet Breed <span className='text-danger'>*</span></Form.Label>
                                 <PetBreedSelector
                                     petType={petData.type}
                                     value={petData.breed}

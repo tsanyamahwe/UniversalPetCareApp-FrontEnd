@@ -11,7 +11,22 @@ export async function getUserById(userId) {
 
 export async function userRegistration(user) {
     try {
-        const response = await api.post("/users/register", user);
+        const registrationPayload = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            gender: user.gender,
+            phoneNumber: user.phoneNumber,
+            email: user.email,
+            password: user.password,
+            userType: user.userType,
+            specialization: user.specialization || '',
+            vetLicence: user.vetLicence || '',
+            //Add account sub-type for PATIENT users (PET_OWNER or FARMER)
+            accountSubType: user.accountSubType || null,
+            //Add animals array for FARMER uses
+            animals: user.animals || []
+        }
+        const response = await api.post("/users/register", registrationPayload);
         return response.data;
     } catch (error) {
         throw error;

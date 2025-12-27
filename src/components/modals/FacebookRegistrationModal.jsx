@@ -39,9 +39,11 @@ const FacebookRegistrationModal = ({show, onHide, facebookToken, facebookUserInf
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
+
         setFormData(prev => ({
             ...prev, 
             [name] : value, 
+            //Clear vet-specific when switchig away from VET
             ...(name === 'userType' && value !== 'VET' 
                 ? {specialization: '', vetLicence: ''} 
                 : {})
@@ -143,187 +145,187 @@ const FacebookRegistrationModal = ({show, onHide, facebookToken, facebookUserInf
     };
 
   return (
-    <Modal  show={show} onHide={handleClose} backdrop='static' centered size='lg'>
-        <Modal.Header closeButton={!isProcessing}>
-            <Modal.Title>Complete Your Facebook Registration</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            {successMessage && (
-                <Alert variant='success' className='mb-2'>
-                    <div className='d-flex align-items-center'>
-                        <i className='bi bi-check-circle-fill fs-4 me-3 text-success'></i>
-                        <div>
-                            <strong>Success!</strong>
-                            <div>{successMessage}</div>
-                            <small className='text-muted'>Redirecting to login page...</small>
-                        </div>
-                    </div>
-                </Alert>
-            )}
-            {!successMessage && show && facebookUserInfo && (
-                <Alert variant='primary' className='mb-3'>
-                    <div className='d-flex align-items-center gap-3'>
-                        <div>
-                            <img
-                                src={getAvatarUrl()}
-                                alt='Profile'
-                                className='rounded-circle'
-                                style={{width: '50px', height: '50px', objectFit: 'cover'}}
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    setImageError(true);
-                                }}
-                            />
-                        </div>
-                        <div className='flex-grow-1'>
-                            <div className='d-flex align-items-center mb-2'>
-                                <i className='bi bi-facebook fs-4 me-2'></i>
-                                <strong>Connected with Facebook</strong>
+        <Modal  show={show} onHide={handleClose} backdrop='static' centered size='lg'>
+            <Modal.Header closeButton={!isProcessing}>
+                <Modal.Title>Complete Your Facebook Registration</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {successMessage && (
+                    <Alert variant='success' className='mb-2'>
+                        <div className='d-flex align-items-center'>
+                            <i className='bi bi-check-circle-fill fs-4 me-3 text-success'></i>
+                            <div>
+                                <strong>Success!</strong>
+                                <div>{successMessage}</div>
+                                <small className='text-muted'>Redirecting to login page...</small>
                             </div>
-                            <div className='small'><strong>Email:</strong> {facebookUserInfo.email}</div>
-                            <div className='small'><strong>Name:</strong> {facebookUserInfo.firstName} {facebookUserInfo.lastName}</div>
                         </div>
-                        <div className='text-center mb-3'>
-                            <Button
-                                variant='link'
-                                size='sm'
-                                onClick={onSwitchAccount}
+                    </Alert>
+                )}
+                {!successMessage && show && facebookUserInfo && (
+                    <Alert variant='primary' className='mb-3'>
+                        <div className='d-flex align-items-center gap-3'>
+                            <div>
+                                <img
+                                    src={getAvatarUrl()}
+                                    alt='Profile'
+                                    className='rounded-circle'
+                                    style={{width: '50px', height: '50px', objectFit: 'cover'}}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        setImageError(true);
+                                    }}
+                                />
+                            </div>
+                            <div className='flex-grow-1'>
+                                <div className='d-flex align-items-center mb-2'>
+                                    <i className='bi bi-facebook fs-4 me-2'></i>
+                                    <strong>Connected with Facebook</strong>
+                                </div>
+                                <div className='small'><strong>Email:</strong> {facebookUserInfo.email}</div>
+                                <div className='small'><strong>Name:</strong> {facebookUserInfo.firstName} {facebookUserInfo.lastName}</div>
+                            </div>
+                            <div className='text-center mb-3'>
+                                <Button
+                                    variant='link'
+                                    size='sm'
+                                    onClick={onSwitchAccount}
+                                >
+                                    <i className='bi bi-arrow-left-right me-1'></i>
+                                    Login with a different<br/> Facebook account
+                                </Button>
+                            </div>
+                        </div>
+                    </Alert>
+                )}
+
+                {!successMessage && (
+                    <Form onSubmit={handleSubmit}>
+                        <Row>
+                            {/**Gender selector*/}
+                            <Col>
+                                <Form.Group className='mb-3'>
+                                    <Form.Label>Gender <span className='text-danger'>*</span></Form.Label>
+                                    <Form.Control
+                                        as='select'
+                                        name='gender'
+                                        value={formData.gender}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isProcessing}
+                                    >
+                                        <option value=''>Select gender</option>
+                                        <option value='MALE'>Male</option>
+                                        <option value='FEMALE'>Female</option>
+                                        <option value='OTHER'>Other</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </Col>
+
+                            {/**Phone Number*/}
+                            <Col>
+                                <Form.Group className='mb-3'>
+                                    <Form.Label>Phone Number<span className='text-danger'>*</span></Form.Label>
+                                    <Form.Control
+                                        type='text'
+                                        name='phoneNumber'
+                                        value={formData.phoneNumber}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isProcessing}
+                                    />
+                                </Form.Group>
+                            </Col> 
+                        </Row>
+
+                        {/**Email*/}
+                        {!facebookUserInfo?.email && (
+                            <Form.Group className='mb-3'>
+                                <Form.Label>EMail Address <span className='text-danger'>*</span></Form.Label>
+                                <Form.Control
+                                    type='email'
+                                    placeholder='Enter your email address'
+                                    value={manualEmail}
+                                    onChange={(e) => setManualEmail(e.target.value)}
+                                    required
+                                />
+                                <Form.Text>
+                                    Facebook didnt provide your email. Please enter it manually.
+                                </Form.Text>
+                            </Form.Group>
+                        )}
+
+                        {/**Account type*/}
+                        <Form.Group className='mb-3'>
+                            <Form.Label>Account Type<span className='text-danger'>*</span></Form.Label>
+                            <Form.Control
+                                as='select'
+                                name='userType'
+                                value={formData.userType}
+                                onChange={handleInputChange}
+                                required
+                                disabled={isProcessing}
                             >
-                                <i className='bi bi-arrow-left-right me-1'></i>
-                                Login with a different<br/> Facebook account
+                                <option value=''>Select account type</option>
+                                <option value='VET'>I am a veterinarian</option>
+                                <option value='PATIENT'>I am a farmer/pet-owner</option>
+                            </Form.Control>
+                        </Form.Group>
+
+                        {formData.userType === 'VET' && (
+                            <>
+                                {/**Vet Specialization - only show for VET users*/}
+                                <Form.Group className='mb-3'>
+                                    <Form.Label>Veterinarian Specialization <span className='text-danger'>*</span></Form.Label>
+                                    <VetSpecializationSelector
+                                        value={formData.specialization}
+                                        onChange={handleInputChange}
+                                        disabled={isProcessing}
+                                    />
+                                </Form.Group>
+
+                                {/**Vet License - only show for VET users*/}
+                                <Form.Group>
+                                <Form.Label>Veterinarian Licence Number <span className='text-danger'>*</span></Form.Label>
+                                    <Form.Control
+                                        type='text'
+                                        name='vetLicence'
+                                        value={formData.vetLicence}
+                                        onChange={handleInputChange}
+                                        placeholder='Enter your veterinary license number'
+                                        required
+                                        disabled={isProcessing}
+                                    />
+                                </Form.Group>
+                            </>
+                        )}
+                        
+                        <div className='d-flex justify-content-end gap-2'>
+                            <Button variant='secondary' onClick={handleClose} disabled={isProcessing}>
+                                Cancel
+                            </Button>
+                            <Button
+                                variant='primary'
+                                type='submit'
+                                disabled={isProcessing}
+                                style={{backgroundColor: '#1877F2', borderColor: '#187700'}}
+                            >
+                                {isProcessing ? (
+                                    <ProcessSpinner message='Completing registration...'/>
+                                ):(
+                                    'Register'
+                                )}
                             </Button>
                         </div>
-                    </div>
-                </Alert>
-            )}
-
-            {!successMessage && (
-                <Form onSubmit={handleSubmit}>
-                    <Row>
-                        {/**Gender selector*/}
-                        <Col>
-                            <Form.Group className='mb-3'>
-                                <Form.Label>Gender <span className='text-danger'>*</span></Form.Label>
-                                <Form.Control
-                                    as='select'
-                                    name='gender'
-                                    value={formData.gender}
-                                    onChange={handleInputChange}
-                                    required
-                                    disabled={isProcessing}
-                                >
-                                    <option value=''>Select gender</option>
-                                    <option value='MALE'>Male</option>
-                                    <option value='FEMALE'>Female</option>
-                                    <option value='OTHER'>Other</option>
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>
-
-                        {/**Phone Number*/}
-                        <Col>
-                            <Form.Group className='mb-3'>
-                                <Form.Label>Phone Number<span className='text-danger'>*</span></Form.Label>
-                                <Form.Control
-                                    type='text'
-                                    name='phoneNumber'
-                                    value={formData.phoneNumber}
-                                    onChange={handleInputChange}
-                                    required
-                                    disabled={isProcessing}
-                                />
-                            </Form.Group>
-                        </Col> 
-                    </Row>
-
-                    {/**Email*/}
-                    {!facebookUserInfo?.email && (
-                        <Form.Group className='mb-3'>
-                            <Form.Label>EMail Address <span className='text-danger'>*</span></Form.Label>
-                            <Form.Control
-                                type='email'
-                                placeholder='Enter your email address'
-                                value={manualEmail}
-                                onChange={(e) => setManualEmail(e.target.value)}
-                                required
-                            />
-                            <Form.Text>
-                                Facebook didnt provide your email. Please enter it manually.
-                            </Form.Text>
-                        </Form.Group>
-                    )}
-
-                    {/**Account type*/}
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Account Type<span className='text-danger'>*</span></Form.Label>
-                        <Form.Control
-                            as='select'
-                            name='userType'
-                            value={formData.userType}
-                            onChange={handleInputChange}
-                            required
-                            disabled={isProcessing}
-                        >
-                            <option value=''>Select account type</option>
-                            <option value='VET'>I am a veterinarian</option>
-                            <option value='PATIENT'>I am a farmer/pet-owner</option>
-                        </Form.Control>
-                    </Form.Group>
-
-                    {formData.userType === 'VET' && (
-                        <>
-                            {/**Vet Specialization - only show for VET users*/}
-                            <Form.Group className='mb-3'>
-                                <Form.Label>Veterinarian Specialization <span className='text-danger'>*</span></Form.Label>
-                                <VetSpecializationSelector
-                                    value={formData.specialization}
-                                    onChange={handleInputChange}
-                                    disabled={isProcessing}
-                                />
-                            </Form.Group>
-
-                            {/**Vet License - only show for VET users*/}
-                            <Form.Group>
-                            <Form.Label>Veterinarian Licence Number <span className='text-danger'>*</span></Form.Label>
-                                <Form.Control
-                                    type='text'
-                                    name='vetLicence'
-                                    value={formData.vetLicence}
-                                    onChange={handleInputChange}
-                                    placeholder='Enter your veterinary license number'
-                                    required
-                                    disabled={isProcessing}
-                                />
-                            </Form.Group>
-                        </>
-                    )}
-                    
-                    <div className='d-flex justify-content-end gap-2'>
-                        <Button variant='secondary' onClick={handleClose} disabled={isProcessing}>
-                            Cancel
-                        </Button>
-                        <Button
-                            variant='primary'
-                            type='submit'
-                            disabled={isProcessing}
-                            style={{backgroundColor: '#1877F2', borderColor: '#187700'}}
-                        >
-                            {isProcessing ? (
-                                <ProcessSpinner message='Completing registration...'/>
-                            ):(
-                                'Register'
-                            )}
-                        </Button>
-                    </div>
-                    {error && (
-                        <Alert variant='danger' dismissible onClose={() => setError('')}>
-                            {error}
-                        </Alert>
-                    )}
-                </Form>
-            )}
-        </Modal.Body>
-    </Modal>
+                        {error && (
+                            <Alert variant='danger' dismissible onClose={() => setError('')}>
+                                {error}
+                            </Alert>
+                        )}
+                    </Form>
+                )}
+            </Modal.Body>
+        </Modal>
   )
 }
 

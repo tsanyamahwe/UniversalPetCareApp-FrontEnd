@@ -5,10 +5,13 @@ import {Button, Card, Col, Container, ListGroup, Row} from "react-bootstrap";
 import { getVeterinarians } from "../veterinarian/VeterinarianService";
 import VetsSlider from "../veterinarian/VetsSlider";
 import NoDataAvailable from "../hooks/NoDataAvailable";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
     const[vets, setVets] = useState([]);
     const[errorMessage, setErrorMessage] = useState("");
+
+    const navigate = useNavigate();
 
     useEffect(() =>{
         getVeterinarians()
@@ -19,6 +22,10 @@ const Home = () => {
             setErrorMessage(error.message || "Something went wrong")
         });
     }, []);
+
+    const handleMeetVeterinarians = () => {
+        navigate('/doctors')
+    }
 
   return (
     <Container className="home-container mt-5">
@@ -40,7 +47,9 @@ const Home = () => {
                               from preventative care and routine check-ups to advanced surgucal procedures and emergency care. Our state-of-the-art facility is equipped with the latest in 
                               veterinary technology, which allows us to deliver high-quality care with precision and. 
                         </Card.Text>
-                        <Button variant='outline-info'>Meet Our Veterinarians</Button>
+                        <Button variant='outline-info' onClick={handleMeetVeterinarians}>
+                            Meet Our Veterinarians
+                        </Button>
                     </Card.Body>
                  </Card>
             </Col>
@@ -61,7 +70,9 @@ const Home = () => {
                         <Card.Text className="mt-3">
                             From routine check-ups to emergency surgery, our full range of veterinary services ensures your pet's health is in good hands.
                         </Card.Text>
-                        <Button variant='outline-info'>Meet Our Veterinarians</Button>
+                        <Button variant='outline-info' onClick={handleMeetVeterinarians}>
+                            Meet Our Veterinarians
+                        </Button>
                      </Card.Body>
                   </Card>
             </Col>
