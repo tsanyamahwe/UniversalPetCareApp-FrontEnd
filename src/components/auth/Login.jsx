@@ -89,8 +89,8 @@ const Login = () => {
                 user = result.user;
             }
 
-            console.log("Extract token: ", token);
-            console.log("Extracted user: ", user);
+            // console.log("Extract token: ", token);
+            // console.log("Extracted user: ", user);
             
             if(!token){
                 console.error("No token found in response structure");
@@ -117,17 +117,34 @@ const Login = () => {
     };
 
     //Method 3: Facebook login handler
-    const handleFacebookLogin = async (data) => {
+    const handleFacebookLogin = async (result) => {
         try {
-            console.log("Facebook login server response: ", data);
-            const token = data.jwt || data.token;
+           // console.log("Facebook login server response: ", result);
+            let token = null;
+            let user = null;
+
+            if(result?.data?.data?.token){
+                token = result.data.data.token;
+                user = result.data.data.user;
+            }else if(result?.data?.token){
+                token = result.data.token;
+                user = result.data.user;
+            }else if(result?.data){
+                token = result.token;
+                user = result.user;
+            }
+
+            // console.log("Extracted token:", token);
+            // console.log("Extracted user:", user);
+            
             if(!token){
-                throw new Error("Invalid response from server");
+                console.error("No token found in response structure");
+                throw new Error("Invalid response from server - no authentication token received");
             }
 
             const success = login(token);
             if(success){
-                const userName = data.user?.name || `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'User';
+                const userName = user?.name || user?.firstName || 'User';
                 setSuccessMessage(`Welcome back, ${userName}`);
                 setShowSuccessAlert(true);
 

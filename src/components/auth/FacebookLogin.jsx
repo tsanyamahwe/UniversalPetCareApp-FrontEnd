@@ -5,44 +5,88 @@ import { getFacebookAccessToken } from './AuthService';
 const FacebookLogin = ({onFacebookLogin}) => {
     const[error, setError] = useState(null);
     const[loading, setLoading] = useState(false);
+    const[sdkLoaded, setSdkLoaded] = useState(false);
 
-    useEffect(() => {
-        window.fbAsyncInit = function () {
-            window.FB.init({
-                appId: process.env.REACT_APP_FACEBOOK_APP_ID || "YOUR_FACEBOOK_APP_ID", 
-                cookie: true,
-                xfbml: true,
-                version: "v21.0" // latest as of 2025
-            });
+    useEffect(() => {        
+        const initializeFacebookSDK = () => {
+            try {
+                window.FB.init({
+                    appId: import.meta.env.VITE_FACEBOOK_APP_ID || "YOUR_FACEBOOK_APP_ID", 
+                    cookie: true,
+                    xfbml: true,
+                    version: "v21.0"
+                });
+                setSdkLoaded(true);
+
+                // Check login status
+                window.FB.getLoginStatus(function(response){
+                    console.log('Initial login status:', response);
+                });
+            } catch (error) {
+                console.error('Error initializing Facebook SDK:', error);
+                setError('Failed to initialize Facebook SDK');
+            }
         };
+
+        // Check if SDK is already loaded
+        if (window.FB) {
+            initializeFacebookSDK();
+        } else {
+            // Define fbAsyncInit before loading the script
+            window.fbAsyncInit = initializeFacebookSDK;
+
+            // Load the Facebook SDK script
+            if(!document.getElementById('facebook-jssdk')){
+                const script = document.createElement('script');
+                script.id = 'facebook-jssdk';
+                script.src = 'https://connect.facebook.net/en_US/sdk.js';
+                script.async = true;
+                script.defer = true;
+                
+                script.onerror = () => {
+                    console.error('Failed to load Facebook SDK script');
+                    setError('Failed to load Facebook SDK');
+                };
+                
+                document.body.appendChild(script);
+            } 
+        }
     }, []);
 
     const handleFacebookLogin = () => {
         setLoading(true);
         setError(null);
 
-        window.FB.login(
-            async function (response) {
-                try {
-                    if(response.authResponse){
-                        const accessToken = response.authResponse.accessToken;
-                        console.log("Facebook Access Token: ", accessToken);
+        if(!window.FB){
+            console.error('Facebook SDK not loaded');
+            setError('Facebook SDK not loaded. Please refresh the page');
+            setLoading(false);
+            return;
+        }
 
-                        const result = await getFacebookAccessToken(accessToken);
-                        onFacebookLogin(result.data);
-                    }else{
-                        setError('Login cancelled or not authorized');
-                        console.log("User cancelled login or did not authorize.");
-                    }
-                } catch (error) {
-                    console.error('Facebook login error:', error);
-                    setError(error.message || 'Failed to authenticate with Facebbok');
-                }finally{
-                    setLoading(false);
-                }
+        window.FB.login(
+            function (response) {
+                handleFacebookResponse(response);
             },
             {scope: "public_profile,email"}
         );
+    };
+
+    const handleFacebookResponse = async (response) => {
+        try {
+            if(response.authResponse){
+                const accessToken = response.authResponse.accessToken;
+                const result = await getFacebookAccessToken(accessToken);
+                onFacebookLogin(result);
+            }else{
+                setError('Login cancelled or not authorized');
+            }
+        } catch (error) {            
+            const errorMsg = error.response?.data?.message || error.message || 'Failed to authenticate with Facebook';
+            setError(errorMsg);
+        } finally {
+            setLoading(false);
+        }
     };
 
   return (
@@ -52,12 +96,16 @@ const FacebookLogin = ({onFacebookLogin}) => {
                 {error}
             </Alert>
         )}
-       <Button onClick={handleFacebookLogin} className='btn btn-primary w-100' disabled={loading}>
-            {loading ? 'Authenticating...' : 'Login with Facebook'}
+       <Button 
+            onClick={handleFacebookLogin} 
+            className='btn btn-primary w-100' 
+            disabled={loading || !sdkLoaded}
+        >
+            {loading ? 'Authenticating...' : !sdkLoaded ? 'Loading...' : 'Login with Facebook'}
        </Button>
        <div className='text-center mt-2'>
             <small className='text-muted'>
-                Sign in securely with your Facebook account
+                {sdkLoaded ? 'Sign in securely with your Facebook account' : 'Loading Facebook SDK...'}
             </small>
        </div>
     </div>

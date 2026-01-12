@@ -34,9 +34,43 @@ export const logoutUser = async () => {
     } catch (error) {
         console.error("Backend logout failed:", error);
     }finally{
+        //revoke Google session if available
+        if(window.google?.accounts?.id){
+            window.google.accounts.id.disableAutoSelect();
+            window.google.accounts.id.cancel();
+
+            const googleToken = localStorage.getItem("googleToken");
+            if(googleToken){
+                //revoke the token with Google
+                window.google.accounts.id.revokle(googleToken, done => {
+                    console.log('Google token revoked:', done);
+                });
+            }
+        }
+
+        //logout from Facebook if SDK is loaded
+        if(window.FB){
+            window.FB.logout(function(response){
+                console.log('User logged out from Facebook');
+            });
+        }
+
+        //clear local storage
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         localStorage.removeItem("userRoles");
+        localStorage.removeItem("googleToken");
+
+        //clear all Google related cookies manually
+        document.cookie.split(",").forEach(function(c){
+            const cookieName = c.trim().split("=")[0];
+            if(cookieName.startsWith("g_") || cookieName.startsWith("_ _Secure-")){
+                document.cookie = cookieName + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=localhost';
+                document.cookie = cookieName + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';
+            }
+        });
+
+        //redirect to home
         window.location.href = "/";
     }
 };
@@ -184,7 +218,7 @@ export const getFacebookAccessToken = async (accessTokenOrData) => {
                 gender: accessTokenOrData.gender,
                 phoneNumber: accessTokenOrData.phoneNumber,
                 specialization: accessTokenOrData.specialization || '',
-                vetLicense: accessTokenOrData.vetLicense || ''
+                vetLicense: accessTokenOrData.vetLicence || ''
             });
             return response;
         }
